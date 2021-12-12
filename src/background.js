@@ -88,7 +88,7 @@ async function createWindow() {
         // and pass the user data path because it's harder to look up in render process
         await win.loadURL(`${process.env.WEBPACK_DEV_SERVER_URL}?userDataPath=${encodeURIComponent(userDataPath)}`).then(() => {
             win.show();
-            // win.openDevTools();
+            win.openDevTools();
         }).catch(console.log);
     } else {
         createProtocol('app')

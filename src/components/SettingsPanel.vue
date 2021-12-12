@@ -7,12 +7,12 @@
   >
     <template v-slot:activator="{ on, attrs }">
       <v-btn
-          icon
-          dark
+          text
           v-bind="attrs"
           v-on="on"
       >
-        <v-icon color="black">mdi-tune</v-icon>
+        <v-icon color="black">mdi-cog</v-icon>
+        <span style="margin-left: 10px">Settings</span>
       </v-btn>
     </template>
     <v-card tile>
@@ -38,11 +38,33 @@
       >
         <v-tabs-slider color="blue accent-3"></v-tabs-slider>
 
-        <v-tab href="#settings-kinet">KiNET</v-tab>
-        <v-tab href="#settings-serial">Serial Port</v-tab>
+        <v-tab href="#settings-general">General</v-tab>
+        <!--
+          <v-tab href="#settings-kinet">KiNET</v-tab>
+          <v-tab href="#settings-serial">Serial Port</v-tab>
+         -->
 
         <v-tabs-items v-model="currentTab">
-          <v-tab-item value="settings-kinet">
+          <v-tab-item value="settings-general">
+            <v-card-text>
+              <v-list>
+                <v-subheader>
+                  The following settings help to configure Illuminations for your particular use case.
+                </v-subheader>
+                <v-list-item>
+                  <v-list-item-content>
+                    <v-text-field
+                        label="Number of lights"
+                        required
+                        placeholder="How many LEDs are you outputting your light shows to?"
+                        v-model="numLights"
+                    ></v-text-field>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </v-card-text>
+          </v-tab-item>
+<!--          <v-tab-item value="settings-kinet">
             <v-card-text>
               <v-list>
                 <v-subheader>Configure the KiNET driver to output your light show for Phillips Color Kinetics products.</v-subheader>
@@ -140,7 +162,7 @@
                 </v-list-item>
               </v-list>
             </v-card-text>
-          </v-tab-item>
+          </v-tab-item>-->
         </v-tabs-items>
 
 
@@ -183,12 +205,19 @@ export default {
     //
   },
   computed: {
-    //
+    numLights: {
+      get () {
+        return this.$store.state.numLights;
+      },
+      set (value) {
+        this.$store.commit('updateNumLights', value)
+      }
+    }
   },
   methods: {
     //
   },
-  mounted(){
+  mounted() {
     /*
     const vm = this;
     SerialPort.list().then(ports => {

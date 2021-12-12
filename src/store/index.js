@@ -37,14 +37,18 @@ const store = new Vuex.Store({
         homeSort: 'Sort by last modified',
         previewMode: 0,
         playingNowWatcher: 0,
-
         // default to Simple Colors
         playingNow: default_shows.filter(show => show.id === '3p__CK7daF')[0],
         lastPublishedShow: default_shows.filter(show => show.id === '3p__CK7daF')[0],
         editingNowId: '3p__CK7daF',
-        shows: default_shows
+        shows: default_shows,
+        numLights: 30
     },
     mutations: {
+        // Update the number of individual LEDs to output / preview
+        updateNumLights(state, number) {
+            state.numLights = number;
+        },
         // Create copy for editing
         createCopy(state, packet) {
             const show = JSON.parse(JSON.stringify(packet.show));

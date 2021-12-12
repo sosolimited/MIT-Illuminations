@@ -8,13 +8,9 @@
     <v-btn text @click="toggleLightsStatus">
       <v-icon v-if="status">mdi-electric-switch-closed</v-icon>
       <v-icon v-else>mdi-electric-switch</v-icon>
-      <span id="lights-text"
-      >Output {{ status ? 'Enabled' : 'Disabled' }}</span
-      >
+      <span id="lights-text">Lights {{ status ? 'On' : 'Off' }}</span>
     </v-btn>
-    <div style="display: none">
-      <SettingsPanel></SettingsPanel>
-    </div>
+    <SettingsPanel></SettingsPanel>
   </v-app-bar>
 </template>
 

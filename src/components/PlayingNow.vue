@@ -37,6 +37,9 @@ export default {
     },
     lightsOn() {
       return this.$store.state.lightsOn;
+    },
+    numLights(){
+      return parseInt(this.$store.state.numLights);
     }
   },
   mounted() {
@@ -54,6 +57,8 @@ export default {
      */
     deployToP5: function () {
 
+      const vm = this;
+
       // Remove the prior deployment of P5 from the DOM
       if (window.p5 && window.p5.instance) {
         window.p5.instance.remove();
@@ -62,6 +67,7 @@ export default {
 
       // Move our helpers and controls into the global namespace
       window.helpers = this.helpers;
+      window.helpers.lights.count = this.numLights;
       window.controls = this.controls;
 
       function imageSrc(filename) {
@@ -88,7 +94,7 @@ export default {
 
       // Handle Intensity Changes in Sampling
       let prevData = []
-      for (let i = 0; i < helpers.lights.count; i++) {
+      for (let i = 0; i < this.numLights; i++) {
         let noRGB = [0, 0, 0];
         prevData = prevData.concat(noRGB);
       }
@@ -97,7 +103,7 @@ export default {
        * Defines the method by which we sample the display for output to the appropriate lights driver.
        */
       window.illuminationsPreviousSample = [];
-      for (let i = 0; i < helpers.lights.count; i++) {
+      for (let i = 0; i < this.numLights; i++) {
         let noRGB = [0, 0, 0];
         window.illuminationsPreviousSample = window.illuminationsPreviousSample.concat(noRGB);
       }
@@ -120,10 +126,10 @@ export default {
         //    limit controls the max. intensity change of each pixel
         //    Defined between 0 and 127
         const limit = 10;
-        const maxNodes = helpers.lights.count;
+        const maxNodes = vm.numLights;
         let x = 0;
         const y = Math.floor(p5.height / 2);
-        const xStep = p5.width / helpers.lights.count;
+        const xStep = p5.width / vm.numLights;
         const x0 = xStep / 2;
         for (let i = 0; i < maxNodes; i++) {
           x = x0 + i * xStep
@@ -198,7 +204,7 @@ export default {
         }
 
         // Sample Data
-        const light_count = helpers.lights.count;
+        const light_count = vm.numLights;
         const illuminations__step = (p5.width - 100) / light_count
         const illuminations__halfStep = illuminations__step / 2
         const halfHeight = p5.height / 2
