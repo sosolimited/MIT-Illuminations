@@ -1,0 +1,70 @@
+{
+  "name": "mit-illuminations",
+  "version": "v1.1.0",
+  "private": true,
+  "description": "Illuminations by MIT - Turn P5 Code into Light Shows",
+  "author": "Sosolimited in collaboration with MIT",
+  "scripts": {
+    "start": "vue-cli-service electron:serve",
+    "install": "electron-rebuild",
+    "postinstall-TEST": "electron-builder install-app-deps",
+    "make-mac-release": "vue-cli-service electron:build -m",
+    "make-windows-release": "vue-cli-service electron:build -w && node tools/make-zip-release.js windows"
+  },
+  "main": "background.js",
+  "dependencies": {
+    "core-js": "^3.6.5",
+    "electron-store": "^8.0.0",
+    "file-system": "^2.2.2",
+    "fs-extra": "^10.0.0",
+    "nanoid": "^3.1.23",
+    "p5": "^1.4.0",
+    "serialport": "^9.2.8",
+    "vue": "^2.6.11",
+    "vue-codemirror": "^4.0.6",
+    "vue-loader": "^15.9.8",
+    "vue-router": "^3.5.2",
+    "vuetify": "^2.5.7",
+    "vuex": "^3.6.2"
+  },
+  "devDependencies": {
+    "@mdi/font": "^5.9.55",
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "babel-eslint": "^10.1.0",
+    "electron": "^13.5.1",
+    "electron-devtools-installer": "^3.1.0",
+    "electron-rebuild": "^3.2.5",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^6.2.2",
+    "vue-cli-plugin-electron-builder": "~2.1.1",
+    "vue-template-compiler": "^2.6.11",
+    "webpack": "^4.42.0",
+    "webpack-cli": "^4.9.1",
+    "webpack-dev-server": "^4.6.0",
+    "zip-a-folder": "^1.1.0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "rules": {},
+    "globals": {
+      "io": true
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
