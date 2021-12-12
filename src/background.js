@@ -9,6 +9,9 @@ const path = require('path');
 const shell = require('electron').shell;
 const userDataPath = app.getPath('userData');
 
+const unhandled = require('electron-unhandled');
+unhandled();
+
 // If any of the starter assets aren't in the userData path,
 // copy them now in the background.
 copyAssets();
