@@ -11,6 +11,7 @@
 
 // Arduino (Adafruit/Neopixel) Serial Port Driver
 // const neopixel = require('../drivers/neopixel.js');
+const serialport = require('serialport');
 
 // Import Helpers
 import helpers from '../config/p5helpers.config';
@@ -19,7 +20,9 @@ export default {
   name: 'PlayingNow',
   data() {
     return {
-      helpers: helpers
+      helpers: helpers,
+      connectedToSerial: false,
+      port: false
     }
   },
   computed: {
@@ -38,16 +41,60 @@ export default {
     lightsOn() {
       return this.$store.state.lightsOn;
     },
-    numLights(){
+    numLights() {
       return parseInt(this.$store.state.numLights);
+    },
+    enableSerial() {
+      return this.$store.state.enableSerial;
+    },
+    selectedSerialPort() {
+      return this.$store.state.selectedSerialPort;
     }
   },
   mounted() {
+
+    // Prepare the serial port
+    this.connectToPort();
+
+    // Deploy the P5
     this.$nextTick(() => {
       this.deployToP5();
     });
   },
   methods: {
+
+    /**
+     * Handles the initial connection to a serial port, and reconnection if lost/closed or the selected port changes
+     */
+    connectToPort: function () {
+
+      if (this.selectedSerialPort.length && this.connectedToSerial === false) {
+        this.port = new serialport(this.selectedSerialPort, {
+          baudRate: 115200,
+          parity: 'none',
+          stopBits: 1,
+          dataBits: 8,
+          autoOpen: false
+        });
+
+        this.port.on('open', () => {
+          this.connectedToSerial = true;
+        });
+
+        this.port.on('close', () => {
+          this.connectedToSerial = false;
+          setTimeout(this.connectToPort.bind(this), 1000);
+        });
+
+        this.port.on('error', () => {
+          this.connectedToSerial = false;
+          setTimeout(this.connectToPort.bind(this), 1000);
+        });
+
+        this.port.open();
+      }
+
+    },
 
     /**
      * Preprocesses the user's code and deploys it to the global P5 instance
@@ -170,7 +217,15 @@ export default {
           //Send the RGB array to the KiNET interface
           if (window.estore) {
             // kinet.sendKinetStrands(data);
-            // neopixel.sendToDevice(data);
+            if (vm.enableSerial) {
+              let outputData = [];
+              for (let i = 0; i < (window.helpers.lights.count * 3); i += 3) {
+                outputData.push(data[i], data[i + 1], data[i + 2]);
+              }
+              if (vm.connectedToSerial) {
+                vm.port.write(Buffer.from(outputData));
+              }
+            }
           }
         }
         window.illuminationsPreviousSample = data;
@@ -410,6 +465,11 @@ export default {
     lightsOn: {
       handler() {
         this.deployToP5();
+      }
+    },
+    selectedSerialPort: {
+      handler() {
+        this.connectToPort();
       }
     }
   }

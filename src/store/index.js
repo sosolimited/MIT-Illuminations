@@ -42,12 +42,26 @@ const store = new Vuex.Store({
         lastPublishedShow: default_shows.filter(show => show.id === '3p__CK7daF')[0],
         editingNowId: '3p__CK7daF',
         shows: default_shows,
-        numLights: 30
+        numLights: 30,
+        enableSerial: true,
+        selectedSerialPort: '',
+        selectedColorMode: 'RGB'
     },
     mutations: {
         // Update the number of individual LEDs to output / preview
         updateNumLights(state, number) {
             state.numLights = number;
+        },
+        // Update whether or not to output light sampling to the serial driver
+        updateEnableSerial(state, boolean) {
+            state.enableSerial = boolean;
+        },
+        // Updates the user's output port for the serial driver
+        updateSelectedSerialPort(state, port) {
+            state.selectedSerialPort = port;
+        },
+        updateSelectedColorMode(state, mode) {
+            state.selectedColorMode = mode;
         },
         // Create copy for editing
         createCopy(state, packet) {

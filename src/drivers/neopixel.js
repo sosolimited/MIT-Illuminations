@@ -4,7 +4,7 @@
 const serialport = require('serialport');
 
 // eslint-disable-next-line no-undef
-const port = new serialport('COM3', {
+const port = new serialport(this.selectedSerialPort, {
     baudRate: 115200,
     parity: 'none',
     stopBits: 1,
@@ -19,7 +19,9 @@ function sendToDevice(buffer){
         outputData.push(buffer[i],buffer[i+1],buffer[i+2]);
     }
 
-    port.write(Buffer.from(outputData));
+    if(this.connectedToSerial){
+        port.write(Buffer.from(outputData));
+    }
 }
 
 

@@ -39,10 +39,9 @@
         <v-tabs-slider color="blue accent-3"></v-tabs-slider>
 
         <v-tab href="#settings-general">General</v-tab>
-        <!--
-          <v-tab href="#settings-kinet">KiNET</v-tab>
-          <v-tab href="#settings-serial">Serial Port</v-tab>
-         -->
+        <!--<v-tab href="#settings-kinet">KiNET</v-tab> -->
+        <v-tab href="#settings-serial">Arduino / Serial</v-tab>
+
 
         <v-tabs-items v-model="currentTab">
           <v-tab-item value="settings-general">
@@ -61,84 +60,93 @@
                     ></v-text-field>
                   </v-list-item-content>
                 </v-list-item>
-              </v-list>
-            </v-card-text>
-          </v-tab-item>
-<!--          <v-tab-item value="settings-kinet">
-            <v-card-text>
-              <v-list>
-                <v-subheader>Configure the KiNET driver to output your light show for Phillips Color Kinetics products.</v-subheader>
-                <v-list-item>
-                  <v-list-item-action>
-                    <v-checkbox v-model="enableKinet"></v-checkbox>
-                  </v-list-item-action>
-                  <v-list-item-content>
-                    <v-list-item-title>Enable KiNET Output</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
                 <v-list-item>
                   <v-list-item-content>
-                    <v-data-table
-                        :headers="[
-                              {
-                                text: 'IP Address',
-                                value: 'ip',
-                              },
-                              { text: 'Port Number', value: 'port' },
-                              { text: 'Number of Lights', value: 'numLights' },
-                          ]"
-                        :items="kinetStrands"
-                    >
-                      <template v-slot:item.ip="props">
-                        <v-edit-dialog
-                            :return-value.sync="props.item.ip"
-                        >
-                          {{ props.item.ip }}
-                          <template v-slot:input>
-                            <v-text-field
-                                v-model="props.item.ip"
-                                label="Set IP Address"
-                                single-line
-                            ></v-text-field>
-                          </template>
-                        </v-edit-dialog>
-                      </template>
-                      <template v-slot:item.port="props">
-                        <v-edit-dialog
-                            :return-value.sync="props.item.port"
-                        >
-                          {{ props.item.port }}
-                          <template v-slot:input>
-                            <v-text-field
-                                v-model="props.item.port"
-                                label="Set Port"
-                                single-line
-                                type="number"
-                            ></v-text-field>
-                          </template>
-                        </v-edit-dialog>
-                      </template>
-                      <template v-slot:item.numLights="props">
-                        <v-edit-dialog
-                            :return-value.sync="props.item.numLights"
-                        >
-                          {{ props.item.numLights }}
-                          <template v-slot:input>
-                            <v-text-field
-                                v-model="props.item.numLights"
-                                label="How Many Lights?"
-                                single-line
-                                type="number"
-                            ></v-text-field>
-                          </template>
-                        </v-edit-dialog>
-                      </template>
-                    </v-data-table>
+                    <v-select
+                        :items="['RGB', 'RGB + W']"
+                        label="Color mode"
+                        v-model="selectedColorMode"
+                    ></v-select>
                   </v-list-item-content>
                 </v-list-item>
               </v-list>
             </v-card-text>
           </v-tab-item>
+          <!--          <v-tab-item value="settings-kinet">
+                      <v-card-text>
+                        <v-list>
+                          <v-subheader>Configure the KiNET driver to output your light show for Phillips Color Kinetics products.</v-subheader>
+                          <v-list-item>
+                            <v-list-item-action>
+                              <v-checkbox v-model="enableKinet"></v-checkbox>
+                            </v-list-item-action>
+                            <v-list-item-content>
+                              <v-list-item-title>Enable KiNET Output</v-list-item-title>
+                            </v-list-item-content>
+                          </v-list-item>
+                          <v-list-item>
+                            <v-list-item-content>
+                              <v-data-table
+                                  :headers="[
+                                        {
+                                          text: 'IP Address',
+                                          value: 'ip',
+                                        },
+                                        { text: 'Port Number', value: 'port' },
+                                        { text: 'Number of Lights', value: 'numLights' },
+                                    ]"
+                                  :items="kinetStrands"
+                              >
+                                <template v-slot:item.ip="props">
+                                  <v-edit-dialog
+                                      :return-value.sync="props.item.ip"
+                                  >
+                                    {{ props.item.ip }}
+                                    <template v-slot:input>
+                                      <v-text-field
+                                          v-model="props.item.ip"
+                                          label="Set IP Address"
+                                          single-line
+                                      ></v-text-field>
+                                    </template>
+                                  </v-edit-dialog>
+                                </template>
+                                <template v-slot:item.port="props">
+                                  <v-edit-dialog
+                                      :return-value.sync="props.item.port"
+                                  >
+                                    {{ props.item.port }}
+                                    <template v-slot:input>
+                                      <v-text-field
+                                          v-model="props.item.port"
+                                          label="Set Port"
+                                          single-line
+                                          type="number"
+                                      ></v-text-field>
+                                    </template>
+                                  </v-edit-dialog>
+                                </template>
+                                <template v-slot:item.numLights="props">
+                                  <v-edit-dialog
+                                      :return-value.sync="props.item.numLights"
+                                  >
+                                    {{ props.item.numLights }}
+                                    <template v-slot:input>
+                                      <v-text-field
+                                          v-model="props.item.numLights"
+                                          label="How Many Lights?"
+                                          single-line
+                                          type="number"
+                                      ></v-text-field>
+                                    </template>
+                                  </v-edit-dialog>
+                                </template>
+                              </v-data-table>
+                            </v-list-item-content>
+                          </v-list-item>
+                        </v-list>
+                      </v-card-text>
+                    </v-tab-item>-->
           <v-tab-item value="settings-serial">
             <v-card-text>
               <v-list>
@@ -162,7 +170,7 @@
                 </v-list-item>
               </v-list>
             </v-card-text>
-          </v-tab-item>-->
+          </v-tab-item>
         </v-tabs-items>
 
 
@@ -175,7 +183,7 @@
 
 <script>
 
-// const SerialPort = require('serialport');
+const SerialPort = require('serialport');
 
 export default {
   name: 'SettingsPanel',
@@ -196,8 +204,6 @@ export default {
           numLights: 56
         }
       ],
-      enableSerial: true,
-      selectedSerialPort: '',
       availableSerialPorts: []
     }
   },
@@ -206,11 +212,35 @@ export default {
   },
   computed: {
     numLights: {
-      get () {
+      get() {
         return this.$store.state.numLights;
       },
-      set (value) {
+      set(value) {
         this.$store.commit('updateNumLights', value)
+      }
+    },
+    enableSerial: {
+      get() {
+        return this.$store.state.enableSerial;
+      },
+      set(value) {
+        this.$store.commit('updateEnableSerial', value)
+      }
+    },
+    selectedSerialPort: {
+      get() {
+        return this.$store.state.selectedSerialPort;
+      },
+      set(value) {
+        this.$store.commit('updateSelectedSerialPort', value)
+      }
+    },
+    selectedColorMode: {
+      get() {
+        return this.$store.state.selectedColorMode;
+      },
+      set(value) {
+        this.$store.commit('updateSelectedColorMode', value)
       }
     }
   },
@@ -218,16 +248,13 @@ export default {
     //
   },
   mounted() {
-    /*
     const vm = this;
     SerialPort.list().then(ports => {
       this.availableSerialPorts = [];
-      ports.forEach(function(port) {
-          vm.availableSerialPorts.push(port.path);
+      ports.forEach(function (port) {
+        vm.availableSerialPorts.push(port.path);
       });
-      console.log("PORTS FOUND: ", vm.availableSerialPorts);
     });
-    */
   }
 }
 </script>
