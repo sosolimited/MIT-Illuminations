@@ -6,7 +6,7 @@
   "author": "Sosolimited in collaboration with MIT",
   "scripts": {
     "start": "vue-cli-service electron:serve",
-    "install-TEST": "electron-rebuild",
+    "install": "electron-rebuild",
     "postinstall": "electron-builder install-app-deps",
     "build": "vue-cli-service electron:build -w",
     "make-mac-release": "vue-cli-service electron:build -m",

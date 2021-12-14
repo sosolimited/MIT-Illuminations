@@ -32,3 +32,12 @@ npm run make-mac-release
 # Windows
 npm run make-windows-release
 ```
+
+------------
+
+## Whoops, you broke it
+If you experience issues serving/building, especially on Windows, navigate to `./node_modules/.bin` and run `electron-rebuild.cmd --module-dir ../../`.
+
+You may need to install `node-gyp` build tools if you haven't already, see: https://github.com/nodejs/node-gyp#on-windows.
+
+To provide context, the `serialport` library has bindings that need to be built for your machine. `electron-rebuild` will do that for you automatically on install, but some times on Windows you have to give it a little push.
