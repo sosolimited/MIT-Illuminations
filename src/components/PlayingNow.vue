@@ -11,7 +11,7 @@
 
 // Arduino (Adafruit/Neopixel) Serial Port Driver
 // const neopixel = require('../drivers/neopixel.js');
-const serialport = require('serialport');
+// const SerialPort = require('serialport');
 
 // Import Helpers
 import helpers from '../config/p5helpers.config';
@@ -69,19 +69,19 @@ export default {
     connectToPort: function () {
 
       if (this.selectedSerialPort.length && this.connectedToSerial === false) {
-        this.port = new serialport(this.selectedSerialPort, {
+        /*this.port = new SerialPort(this.selectedSerialPort, {
           baudRate: 115200,
           parity: 'none',
           stopBits: 1,
           dataBits: 8,
-          autoOpen: false
-        });
+          autoOpen: true
+        });*/
 
-        this.port.on('open', () => {
+        /*this.port.on('open', () => {
           this.connectedToSerial = true;
-        });
+        });*/
 
-        this.port.on('close', () => {
+        /*this.port.on('close', () => {
           this.connectedToSerial = false;
           setTimeout(this.connectToPort.bind(this), 1000);
         });
@@ -89,9 +89,9 @@ export default {
         this.port.on('error', () => {
           this.connectedToSerial = false;
           setTimeout(this.connectToPort.bind(this), 1000);
-        });
+        });*/
 
-        this.port.open();
+        //this.port.open();
       }
 
     },

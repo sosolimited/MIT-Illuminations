@@ -6,8 +6,9 @@
   "author": "Sosolimited in collaboration with MIT",
   "scripts": {
     "start": "vue-cli-service electron:serve",
-    "install": "electron-rebuild",
-    "postinstall-TEST": "electron-builder install-app-deps",
+    "install-TEST": "electron-rebuild",
+    "postinstall": "electron-builder install-app-deps",
+    "build": "vue-cli-service electron:build -w",
     "make-mac-release": "vue-cli-service electron:build -m",
     "make-windows-release": "vue-cli-service electron:build -w && node tools/make-zip-release.js windows"
   },

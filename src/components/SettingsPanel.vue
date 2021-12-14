@@ -183,6 +183,7 @@
 
 <script>
 
+// eslint-disable-next-line no-unused-vars
 const SerialPort = require('serialport');
 
 export default {
@@ -248,13 +249,15 @@ export default {
     //
   },
   mounted() {
-    const vm = this;
+    /* const vm = this;
     SerialPort.list().then(ports => {
       this.availableSerialPorts = [];
-      ports.forEach(function (port) {
+      for (let port of ports) {
         vm.availableSerialPorts.push(port.path);
-      });
-    });
+      }
+    }).catch(error => {
+      console.log(error);
+    }); */
   }
 }
 </script>

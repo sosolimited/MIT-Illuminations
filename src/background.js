@@ -27,7 +27,7 @@ protocol.registerSchemesAsPrivileged([
     }
 ]);
 
-async function createWindow() {
+function createWindow() {
     // Define the application file menu
     const fileMenu = Menu.buildFromTemplate([
         /*{
@@ -84,22 +84,23 @@ async function createWindow() {
             webSecurity: false,
             preload: path.join(__dirname, 'preload.js')
         }
-    })
+    });
 
     if (process.env.WEBPACK_DEV_SERVER_URL) {
         // Load the url of the dev server if in development mode,
         // and pass the user data path because it's harder to look up in render process
-        await win.loadURL(`${process.env.WEBPACK_DEV_SERVER_URL}?userDataPath=${encodeURIComponent(userDataPath)}`).then(() => {
-            win.show();
-            win.openDevTools();
-        }).catch(console.log);
+        win.loadURL(`${process.env.WEBPACK_DEV_SERVER_URL}?userDataPath=${encodeURIComponent(userDataPath)}`).catch(error => {
+            console.log(error);
+        });
     } else {
-        createProtocol('app')
+        createProtocol('app');
         // Load the index.html when not in development
-        await win.loadURL(`app://./index.html?userDataPath=${encodeURIComponent(userDataPath)}`).then(() => {
-            win.show();
-        }).catch(console.log);
+        win.loadURL('app://./index.html?userDataPath=' + encodeURIComponent(userDataPath) + '').catch(error => {
+            throw new Error(error.message);
+        });
     }
+
+    win.show();
 }
 
 // Quit when all windows are closed.
@@ -126,12 +127,13 @@ app.on('ready', async () => {
         try {
             return callback(pathname)
         } catch (err) {
-            console.error(err)
-            return callback(404)
+            console.log("Houston... we have a problem.");
+            console.error(err);
+            return callback(404);
         }
     })
 
-    await createWindow();
+    createWindow();
 })
 
 // Exit cleanly on request from parent process in development mode.
