@@ -246,18 +246,34 @@ export default {
     }
   },
   methods: {
-    //
+
+    /**
+     * Updates the list of available serial ports
+     */
+    updatePortList: function () {
+      const vm = this;
+      SerialPort.list().then(ports => {
+        if (JSON.stringify(ports.map(port => port.path)) !== JSON.stringify(this.availableSerialPorts)) {
+          this.availableSerialPorts = [];
+          for (let port of ports) {
+            vm.availableSerialPorts.push(port.path);
+          }
+          if (ports.includes(this.selectedSerialPort) === false) {
+            this.selectedSerialPort = null;
+          }
+        }
+      }).catch(error => {
+        console.log(error);
+      });
+    }
   },
   mounted() {
-    /* const vm = this;
-    SerialPort.list().then(ports => {
-      this.availableSerialPorts = [];
-      for (let port of ports) {
-        vm.availableSerialPorts.push(port.path);
-      }
-    }).catch(error => {
-      console.log(error);
-    }); */
+    this.updatePortList();
+
+    // Keep our serial port list up-to-date, every 2 seconds
+    setInterval(function () {
+      this.updatePortList();
+    }.bind(this), 2000);
   }
 }
 </script>

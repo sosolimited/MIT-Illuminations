@@ -6,12 +6,14 @@
 
 <script>
 
+// Error Handling
+const { dialog } = require('electron');
+
 // Kinet (DMX) Connection UDP Driver
 // const kinet = require('../drivers/kinet.js');
 
 // Arduino (Adafruit/Neopixel) Serial Port Driver
-// const neopixel = require('../drivers/neopixel.js');
-// const SerialPort = require('serialport');
+const SerialPort = require('serialport');
 
 // Import Helpers
 import helpers from '../config/p5helpers.config';
@@ -68,30 +70,44 @@ export default {
      */
     connectToPort: function () {
 
+      SerialPort.list().then(ports => {
+        if (ports.includes(this.selectedSerialPort) === false) {
+          this.selectedSerialPort = null;
+        }
+      });
+
       if (this.selectedSerialPort.length && this.connectedToSerial === false) {
-        /*this.port = new SerialPort(this.selectedSerialPort, {
+
+        this.port = new SerialPort(this.selectedSerialPort, {
           baudRate: 115200,
           parity: 'none',
           stopBits: 1,
           dataBits: 8,
           autoOpen: true
-        });*/
-
-        /*this.port.on('open', () => {
-          this.connectedToSerial = true;
-        });*/
-
-        /*this.port.on('close', () => {
-          this.connectedToSerial = false;
-          setTimeout(this.connectToPort.bind(this), 1000);
         });
 
-        this.port.on('error', () => {
-          this.connectedToSerial = false;
-          setTimeout(this.connectToPort.bind(this), 1000);
-        });*/
+        this.port.on('open', () => {
+          this.connectedToSerial = true;
+        });
 
-        //this.port.open();
+        this.port.on('close', () => {
+          this.connectedToSerial = false;
+          dialog.showMessageBox({
+            message: 'The selected serial port is no longer available.',
+            details: 'It looks like your lights have disconnected. Try unplugging and plugging them back in - and then select the appropriate port in the settings panel.'
+          });
+        });
+
+        this.port.on('error', (error) => {
+          this.connectedToSerial = false;
+          this.selectedSerialPort = null;
+          dialog.showMessageBox({
+            message: 'There was an error with your serial port.',
+            details: 'Details: ' + error
+          });
+        });
+
+        this.port.open();
       }
 
     },
