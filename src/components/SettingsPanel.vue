@@ -152,6 +152,11 @@
               <v-list>
                 <v-subheader>Configure the serial port to output your light show for Arduino / Adafruit Neopixel products.</v-subheader>
                 <v-list-item>
+                  <v-list-item-content>
+                    <v-alert text type="info">Heads up! Sending data over serial port won't work until you've <a href="#" @click.prevent="openExternalPage('https://learn.adafruit.com/adafruit-neopixel-uberguide/arduino-library-installation')">installed the Neopixel library</a> and have uploaded the <a href="#" @click.prevent="openExternalPage('https://github.com/sosolimited/MIT-Illuminations/blob/master/arduino/illuminations.ino')">Illuminations sketch file</a> to your Arduino.</v-alert>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item>
                   <v-list-item-action>
                     <v-checkbox v-model="enableSerial"></v-checkbox>
                   </v-list-item-action>
@@ -163,7 +168,7 @@
                   <v-list-item-content>
                     <v-select
                         :items="availableSerialPorts"
-                        label="Serial Port"
+                        label="Select a Serial Port"
                         v-model="selectedSerialPort"
                     ></v-select>
                   </v-list-item-content>
@@ -182,6 +187,8 @@
 </template>
 
 <script>
+
+let shell = require('electron').shell
 
 // eslint-disable-next-line no-unused-vars
 const SerialPort = require('serialport');
@@ -246,6 +253,14 @@ export default {
     }
   },
   methods: {
+
+    /**
+     * Open external documentation in the default browser
+     * @param url
+     */
+    openExternalPage: function(url){
+      shell.openExternal(url);
+    },
 
     /**
      * Updates the list of available serial ports
