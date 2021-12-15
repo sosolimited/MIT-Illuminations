@@ -14,9 +14,14 @@ To download the latest stable release, visit https://illuminations.mit.edu/, or 
 
 If you wish to fork this repo and build it yourself, follow the steps below to jump in...
 
-### To begin, install the dependencies...
+### To begin, run the installation script
+
 ```
-npm install
+// Mac OS
+npm install && electron-rebuild
+
+// Windows (sometimes needs a little push)
+npm install && cd node_modules/.bin && electron-rebuild.cmd --module-dir ../../
 ```
 
 ### To compile and hot-reload on the fly (while developing)...
@@ -32,12 +37,3 @@ npm run make-mac-release
 # Windows
 npm run make-windows-release
 ```
-
-------------
-
-## Whoops, you broke it
-If you experience issues serving/building, especially on Windows, navigate to `./node_modules/.bin` and run `electron-rebuild.cmd --module-dir ../../`.
-
-You may need to install `node-gyp` build tools if you haven't already, see: https://github.com/nodejs/node-gyp#on-windows.
-
-To provide context, the `serialport` library has bindings that need to be built for your machine. `electron-rebuild` will do that for you automatically on install, but some times on Windows you have to give it a little push.
