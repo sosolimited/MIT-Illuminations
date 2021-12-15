@@ -27,7 +27,11 @@ protocol.registerSchemesAsPrivileged([
     }
 ]);
 
-async function createWindow() {
+function createWindow() {
+
+    // Establish the splash screen
+    const splash = new BrowserWindow({width: 800, height: 500, transparent: true, frame: false, alwaysOnTop: true});
+
     // Define the application file menu
     const fileMenu = Menu.buildFromTemplate([
         /*{
@@ -87,19 +91,18 @@ async function createWindow() {
     })
 
     if (process.env.WEBPACK_DEV_SERVER_URL) {
-        // Load the url of the dev server if in development mode,
-        // and pass the user data path because it's harder to look up in render process
-        await win.loadURL(`${process.env.WEBPACK_DEV_SERVER_URL}?userDataPath=${encodeURIComponent(userDataPath)}`).then(() => {
-            win.show();
-            win.openDevTools();
-        }).catch(console.log);
+        splash.loadURL(`file://${__dirname}/bundled/splash.html`).catch(console.log);
+        win.loadURL(`${process.env.WEBPACK_DEV_SERVER_URL}?userDataPath=${encodeURIComponent(userDataPath)}`).catch(console.log);
     } else {
-        createProtocol('app')
-        // Load the index.html when not in development
-        await win.loadURL(`app://./index.html?userDataPath=${encodeURIComponent(userDataPath)}`).then(() => {
-            win.show();
-        }).catch(console.log);
+        createProtocol('app');
+        splash.loadURL(`app://./splash.html`).catch(console.log);
+        win.loadURL(`app://./index.html?userDataPath=${encodeURIComponent(userDataPath)}`).catch(console.log);
     }
+
+    win.once('ready-to-show', () => {
+        splash.destroy();
+        win.show();
+    });
 }
 
 // Quit when all windows are closed.
@@ -131,7 +134,7 @@ app.on('ready', async () => {
         }
     })
 
-    await createWindow();
+    createWindow();
 })
 
 // Exit cleanly on request from parent process in development mode.
