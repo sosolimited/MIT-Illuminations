@@ -51,6 +51,9 @@ export default {
     },
     selectedSerialPort() {
       return this.$store.state.selectedSerialPort;
+    },
+    selectedColorMode() {
+      return this.$store.state.selectedColorMode;
     }
   },
   mounted() {
@@ -164,20 +167,41 @@ export default {
         const x0 = xStep / 2;
         for (let i = 0; i < vm.numLights; i++) {
           x = x0 + i * xStep;
-          const RGB = p5.get(x, y);
+          let RGB = p5.get(x, y);
           RGB.splice(3, 1);
+          // Convert to RGB+W if needed
+          if (vm.selectedColorMode === 'RGB + W'){
+            let M = Math.max(RGB[0],RGB[1],RGB[2]);
+            let m = Math.min(RGB[0],RGB[1],RGB[2]);
+            let Wo = (m/M < 0.5) ? ( (m*M) / (M-m) ) : M;
+            let K = (Wo + M) / M;
+            let outputRGB = [];
+            outputRGB[0] = Math.floor[ ( K * RGB[0] ) - Wo ];
+            outputRGB[1] = Math.floor[ ( K * RGB[1] ) - Wo ];
+            outputRGB[2] = Math.floor[ ( K * RGB[2] ) - Wo ];
+            outputRGB[3] = Wo;
+            RGB = outputRGB;
+          }
           data = data.concat(RGB);
         }
-        // kinet.sendKinetStrands(data);
+
+        // Output Serial Data
         if (vm.enableSerial) {
           let outputData = [];
-          for (let i = 0; i < (window.helpers.lights.count * 3); i += 3) {
-            outputData.push(data[i], data[i + 1], data[i + 2]);
+          if (vm.selectedColorMode === 'RGB') {
+            for (let i = 0; i < (window.helpers.lights.count * 3); i += 3) {
+              outputData.push(data[i], data[i + 1], data[i + 2]);
+            }
+          } else {
+            for (let i = 0; i < (window.helpers.lights.count * 4); i += 4) {
+              outputData.push(data[i], data[i + 1], data[i + 2], data[i + 3]);
+            }
           }
           if (vm.connectedToSerial) {
             vm.port.write(Buffer.from(outputData));
           }
         }
+        // kinet.sendKinetStrands(data);
       }
 
       /**

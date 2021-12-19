@@ -37,11 +37,16 @@ void loop(){
     Serial.readBytes(buf, total_vals);
     int pixel = 0;
     for( int i = 0; i < (total_vals - 1); ){
-      int r,g,b;
+      int r,g,b,w;
       r = (int) buf[i];
       g = (int) buf[i+1];
       b = (int) buf[i+2];
-      strip.setPixelColor(pixel,r,g,b);
+      if(N_COLORS == 3){
+        strip.setPixelColor(pixel,r,g,b);
+      }else if(N_COLORS == 4){
+        w = (int) buf[i+3];
+        strip.setPixelColor(pixel,r,g,b,w);
+      }
       pixel += 1;
       i += N_COLORS;
     }
