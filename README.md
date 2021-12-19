@@ -49,7 +49,7 @@ Welcome, and thanks for downloading Illuminations by MIT. In no time at all you'
 ### Step 3. Arduino configuration
 
 1. Open the Arduino IDE and copy the code from [this link](https://github.com/sosolimited/MIT-Illuminations/blob/master/arduino/illuminations.ino) into a brand new blank sketch.
-2. Update the values on line `3` and `4` of this code to match your LED device.
+2. Update the values on line `11` and `14` of this code to match your LED device.
    1. `LED COUNT` is the number of LED lights _(in our example, it should be `16`)_
    2. `N_COLORS` should be `3` for RGB units, and `4` for RGB+W _(in our example, that's `3`)_
 3. Make sure you have your Arduino Uno selected within the IDE, and hit **"_Upload_"**. This publishes the code to your Arduino.

@@ -7,7 +7,7 @@
 <script>
 
 // Error Handling
-const { dialog } = require('electron');
+const {dialog} = require('electron');
 
 // Kinet (DMX) Connection UDP Driver
 // const kinet = require('../drivers/kinet.js');
@@ -155,96 +155,29 @@ export default {
         return false;
       }
 
-      // Handle Intensity Changes in Sampling
-      let prevData = []
-      for (let i = 0; i < this.numLights; i++) {
-        let noRGB = [0, 0, 0];
-        prevData = prevData.concat(noRGB);
-      }
-
-      /**
-       * Defines the method by which we sample the display for output to the appropriate lights driver.
-       */
-      window.illuminationsPreviousSample = [];
-      for (let i = 0; i < this.numLights; i++) {
-        let noRGB = [0, 0, 0];
-        window.illuminationsPreviousSample = window.illuminationsPreviousSample.concat(noRGB);
-      }
-
-      //
-      //    The 'illuminationsSampling' method has access to all p5 methods.
-      //    It gets called every frame at the end of the user's draw method
-      //    and maps a series of pixels in the canvas to the corresponding
-      //    red, green, and blue LED lights using the KiNET interface
-      //
-      //    To call a p5 method from within 'sampleLogic', prefix the
-      //    method with 'p5'. For example, 'get()' can be called with 'p5.get()'.
-      //
       window.illuminationsSampling = function () {
         const p5 = window.illuminationsP5;
-        let prevData = window.illuminationsPreviousSample;
         let data = [];
-        const filter = false;
-        //
-        //    limit controls the max. intensity change of each pixel
-        //    Defined between 0 and 127
-        const limit = 10;
-        const maxNodes = vm.numLights;
         let x = 0;
         const y = Math.floor(p5.height / 2);
         const xStep = p5.width / vm.numLights;
         const x0 = xStep / 2;
-        for (let i = 0; i < maxNodes; i++) {
-          x = x0 + i * xStep
-          let RGB = p5.get(x, y) //RGB values from the p5 sketch
-          //
-          //  The filter applies a time-domain convolution on the RGB values
-          //  sent to the LED strand. It averages each of the Red, Green, and
-          //  Blue values of the p5 sketch animation and the previously stored
-          //  values displayed in the LED strand setting a limit of how much
-          //  each individual pixel can increase its intensity (limit = 10);
-          //
-          if (filter === true) {
-            for (let j = 0; j < 3; j++) {
-              let currRGBv = RGB[j] //Current pixel value
-              let prevRGBv = prevData[i * 3 + j] //Previous pixel value
-              let newRGBv //New pixel value
-              let dist //Distance between previous and current pix. value
-              let change //Intensity change to the current pixel value
-              let lim = limit
-              if (prevRGBv <= currRGBv) {
-                dist = currRGBv - prevRGBv
-                change = dist / 2 >= lim ? lim : dist / 2
-                newRGBv = prevRGBv + change
-              } else {
-                dist = prevRGBv - currRGBv
-                change = dist / 2 >= lim ? lim : dist / 2
-                newRGBv = prevRGBv - change
-              }
-              data = data.concat(newRGBv) //Stores the pix. value
-            }
-          } else {
-            RGB.splice(3, 1)
-            data = data.concat(RGB)
+        for (let i = 0; i < vm.numLights; i++) {
+          x = x0 + i * xStep;
+          const RGB = p5.get(x, y);
+          RGB.splice(3, 1);
+          data = data.concat(RGB);
+        }
+        // kinet.sendKinetStrands(data);
+        if (vm.enableSerial) {
+          let outputData = [];
+          for (let i = 0; i < (window.helpers.lights.count * 3); i += 3) {
+            outputData.push(data[i], data[i + 1], data[i + 2]);
+          }
+          if (vm.connectedToSerial) {
+            vm.port.write(Buffer.from(outputData));
           }
         }
-        const fps = 60
-        if (p5.frameCount % (60 / fps) === 0) {
-          //Send the RGB array to the KiNET interface
-          if (window.estore) {
-            // kinet.sendKinetStrands(data);
-            if (vm.enableSerial) {
-              let outputData = [];
-              for (let i = 0; i < (window.helpers.lights.count * 3); i += 3) {
-                outputData.push(data[i], data[i + 1], data[i + 2]);
-              }
-              if (vm.connectedToSerial) {
-                vm.port.write(Buffer.from(outputData));
-              }
-            }
-          }
-        }
-        window.illuminationsPreviousSample = data;
       }
 
       /**
@@ -442,20 +375,22 @@ export default {
       }
 
       // Must remain a constant and not directly referenced so that it can be appended to with illuminationsSampling/illuminationsPreview methods below
+      const userDefinedSetupMethod = window.setup || function () {
+      };
       const userDefinedDrawMethod = window.draw || function () {
       };
 
-      // Define target FPS
-      window.illuminationsFPSCap = 60;
+      window.setup = function () {
+        userDefinedSetupMethod();
+        window.frameRate(30);
+      }
 
       // Draw the user's code if lights are on, otherwise draw a black screen.
       if (this.lightsOn) {
         window.draw = function () {
-          if (window.illuminationsP5.frameCount % (60 / window.illuminationsFPSCap) === 0) {
-            userDefinedDrawMethod();
-            window.illuminationsSampling();
-            window.illuminationsPreview();
-          }
+          userDefinedDrawMethod();
+          window.illuminationsSampling();
+          window.illuminationsPreview();
         }
       } else {
         window.draw = function () {
