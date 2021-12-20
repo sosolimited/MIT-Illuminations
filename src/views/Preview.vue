@@ -722,8 +722,6 @@ export default {
     }
   },
   watch: {
-    // TODO(Anna): This could be handled all internally to this
-    // component by creating a temp controls object.
     controls: {
       handler() {
         if (this.isCodeRunning) {

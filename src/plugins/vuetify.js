@@ -11,8 +11,7 @@ const opts = {
     icons: {
         iconfont: 'mdi'
     },
-    theme: { dark: false },
-    // Todo: Simon - Can we, while working on responsiveness, also just provide a toggleable dark/light mode?
+    theme: { dark: false }
 }
 
 export default new Vuetify(opts)

@@ -47,25 +47,8 @@
                   ></v-text-field>
                 </v-col>
 
-                <!-- Control id (readonly) -->
-<!--                <v-col cols="6">
-                  <v-text-field
-                      label="Control ID"
-                      persistent-hint
-                      hint="Auto-generated ID based on control name"
-                      readonly
-                      :value="toCamelCase(controlObj.name)"
-                  ></v-text-field>
-                </v-col>-->
-
                 <!-- Number-specific -->
-                <v-col
-                    cols="4"
-                    v-if="
-                                        controlObj.type.toLowerCase() ===
-                                        'number'
-                                    "
-                >
+                <v-col cols="4" v-if="controlObj.type.toLowerCase() ==='number'">
                   <v-text-field
                       type="number"
                       label="Minimum"
@@ -74,13 +57,7 @@
                       required
                   ></v-text-field>
                 </v-col>
-                <v-col
-                    cols="4"
-                    v-if="
-                                        controlObj.type.toLowerCase() ===
-                                        'number'
-                                    "
-                >
+                <v-col cols="4" v-if="controlObj.type.toLowerCase() ==='number'">
                   <v-text-field
                       type="number"
                       label="Maximum"
@@ -89,13 +66,7 @@
                       required
                   ></v-text-field>
                 </v-col>
-                <v-col
-                    cols="4"
-                    v-if="
-                                        controlObj.type.toLowerCase() ===
-                                        'number'
-                                    "
-                >
+                <v-col cols="4" v-if="controlObj.type.toLowerCase() ==='number'">
                   <v-text-field
                       type="number"
                       label="Step"
@@ -126,14 +97,7 @@
           <v-btn color="blue darken-1" text @click="close">
             Close
           </v-btn>
-          <v-btn
-              color="blue darken-1"
-              text
-              @click="saveAndClose"
-              :disabled="!valid"
-          >
-            Save
-          </v-btn>
+          <v-btn color="blue darken-1" text @click="saveAndClose" :disabled="!valid">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -141,14 +105,6 @@
 </template>
 
 <script>
-/* TODO:
-    - Add rule: control ID cannot already be in use
-    - Add rule: min/max/step values make sense
-    - ----
-    - Nice-to-have: checkbox control
-    - Nice-to-have: text field control
-    - Nice-to-have: show min/max/value on slider
-*/
 export default {
   name: 'ControlForm',
   props: {
@@ -187,7 +143,6 @@ export default {
       return this.$route.params.id
     },
     value() {
-      // Default values for new controls
       if (this.controlObj.type.toLowerCase() === 'color') {
         return '#EC3131'
       } else if (this.controlObj.type.toLowerCase() === 'image') {
@@ -205,9 +160,8 @@ export default {
       this.$refs.controlForm.resetValidation()
     },
     toCamelCase(str) {
-      // https://stackoverflow.com/questions/2970525/converting-any-string-into-camel-case
       return str.replace(
-          /(?:^\w|[A-Z]|\b\w|\s+)/g,
+          /^\w|[A-Z]|\b\w|\s+/g,
           function (match, index) {
             if (+match === 0) return ''
             return index === 0

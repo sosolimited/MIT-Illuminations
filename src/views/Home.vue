@@ -158,8 +158,6 @@ export default {
       this.$store.commit('setHomeFilter', filter)
     },
     setHomeSort(sort) {
-      // TODO(Anna): combine these mutations, as they always happen
-      // together.
       this.$store.commit('setHomeSort', sort)
       this.$store.commit('sortShows')
     }

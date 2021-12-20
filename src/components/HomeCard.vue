@@ -1,8 +1,4 @@
 <template>
-  <!--
-      TODO(Anna): V-hover around card on hover?
-      https://vuetifyjs.com/en/components/hover/
-  -->
   <v-card v-if="!show.deleted" class="preview-card" style="width:100%">
     <!-- Thumbnail -->
     <v-img
