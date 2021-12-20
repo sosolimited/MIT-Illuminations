@@ -61,17 +61,11 @@ const store = new Vuex.Store({
         updateSelectedColorMode(state, mode) {
             state.selectedColorMode = mode;
         },
-        // Create copy for editing
+        // Create a copy of a show for editing
         createCopy(state, packet) {
             const show = JSON.parse(JSON.stringify(packet.show));
             show.id = packet.id;
             show.tmp = false;
-            state.shows.push(show);
-        },
-        createTmpCopy(state, packet) {
-            const show = JSON.parse(JSON.stringify(packet.show));
-            show.id = packet.id;
-            show.tmp = true;
             state.shows.push(show);
         },
         deleteShow(state, id) {
@@ -88,19 +82,6 @@ const store = new Vuex.Store({
             show.controls = JSON.parse(JSON.stringify(updates.controls));
             show.code = updates.code;
             show.lastModified = new Date().getTime();
-        },
-        markShowAsPlaying(state) {
-            // Unmark current selection
-            const currentlyPlaying = state.shows.filter(
-                (show) => show.playing
-            )[0];
-            currentlyPlaying.playing = false;
-            // Mark new selection
-            const newPlaying = state.shows.find(
-                (show) => show.id === state.editingNowId
-            )
-            newPlaying.playing = true;
-            newPlaying.lastPlayed = new Date().getTime();
         },
         uploadToLights(state) {
             const show = state.shows.find(
@@ -171,33 +152,6 @@ const store = new Vuex.Store({
                 state.shows.sort(lastModified);
             }
         },
-        setPlayingNowThumbnailData(state, buffer) {
-            state.playingNow.info.thumbnailData = buffer;
-        },
-
-        // Old
-        addShow(state, show) {
-            state.shows.push(show);
-        },
-        updateShow(state, updates) {
-            const show = state.shows.find((show) => show.id === updates.id);
-            show.title = updates.title;
-            show.description = updates.description;
-            show.thumbnail = updates.thumbnail;
-        },
-        deactivateShow(state, id) {
-            const show = state.shows.find((show) => show.id === id);
-            show.playing = false;
-        },
-        activateShow(state, id) {
-            const show = state.shows.find((show) => show.id === id);
-            show.playing = true;
-        },
-        setPlayingNowShow(state, id) {
-            const show = state.shows.find((show) => show.id === id);
-            state.playingNow = JSON.parse(JSON.stringify(show));
-            store.state.playingNowWatcher += 1;
-        },
         setLastPublishedShow(state, id) {
             state.lastPublishedShow = state.shows.find((show) => show.id === id);
         },
@@ -208,69 +162,10 @@ const store = new Vuex.Store({
                 store.state.playingNowWatcher += 1;
             }
         },
-        // deleteShow(state, id) {
-        //     const show = state.shows.find(show => show.id === id)
-        //     show.deleted = true
-        // },
         toggleLightsStatus(state) {
             state.lightsOn = !state.lightsOn;
         },
-        toggleHomeFilter(state, filter) {
-            state.homeFilters[filter] = !state.homeFilters[filter];
-        },
-        setCode(state, info) {
-            const show = state.shows.find((show) => show.id === info.id);
-            show.code = info.code;
-        },
-        // addControl(state, info) {
-        //     const show = state.shows.find(show => show.id === info.id)
-        //     show.controls[info.controlObj.id] = info.controlObj
-        // },
-        // deleteControl(state, info) {
-        //     const show = state.shows.find(show => show.id === info.id)
-        //     delete show.controls[info.controlObj.id]
-        // },
-        addDraftForEditing(state, id) {
-            const show = state.shows.find((show) => show.id === id);
-            // JSON parse & stringify decouple 'published' from 'draft' objects,
-            // which is what we want...until the user publishes their draft.
-            show.draft = JSON.parse(JSON.stringify(show.published));
-            console.log('New draft created for editing');
-        },
-        saveDraftAsPublished(state, id) {
-            const show = state.shows.find((show) => show.id === id);
-            show.published = JSON.parse(JSON.stringify(show.draft));
-            console.log('Draft saved to published');
-        },
-        discardDraft(state, id) {
-            const show = state.shows.find((show) => show.id === id);
-            show.draft = null;
-            console.log('Draft cleared');
-        },
-        addDraftControl(state, info) {
-            const show = state.shows.find((show) => show.id === info.id);
-            show.draft.controls[info.controlObj.id] = info.controlObj;
-            console.log(show.draft);
-        },
-        updateDraftInfo(state, info) {
-            const show = state.shows.find((show) => show.id === info.id);
-            show.draft.info = info.info;
-        },
-        updateDraftCode(state, info) {
-            const show = state.shows.find((show) => show.id === info.id);
-            show.draft.code = info.code;
-        },
-        stopDraftCode(state) {
-            state.draftCodeRunning = false;
-            console.log('stop draft code');
-        },
-        runDraftCode(state) {
-            state.draftCodeRunning = true;
-            console.log('run draft code');
-        },
         removeTmpShows(state) {
-            // Clean the store of any tmp shows that are the result
-            // of exiting the app before vue can be destroyed.
             state.shows = state.shows.filter((show) => !show.tmp);
         },
         updatePreviewMode(state, value) {
@@ -307,19 +202,8 @@ const store = new Vuex.Store({
         locked(state) {
             return state.shows.filter((show) => show.locked);
         },
-
-        // Old
-        templates(state) {
-            return state.shows.filter((show) => show.template);
-        },
-        favorites(state) {
-            return state.shows.filter((show) => show.info.favorite);
-        },
         published(state) {
             return state.shows.filter((show) => show.published);
-        },
-        drafts(state) {
-            return state.shows.filter((show) => !show.published);
         },
         filteredShows(state) {
             let shows = state.shows;
@@ -343,14 +227,6 @@ const store = new Vuex.Store({
 // On every mutation, update the persistent electronStore.
 store.subscribe(() => {
     electronStore.set('state', store.state);
-})
-
-// Opens electron store's auto-generated config.json in the
-// userData folder of the local OS. Might be useful to open
-// automatically on first run to set up IP addresses for kinet
-// signaling. To use, must also be enabled in src/preload.js.
-if (process.env.NODE_ENV === 'development' && electronStore) {
-    // electronStore.openInEditor();
-}
+});
 
 export default store
