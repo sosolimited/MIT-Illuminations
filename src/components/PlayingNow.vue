@@ -6,14 +6,11 @@
 
 <script>
 
-// Error Handling
-const {dialog} = require('electron');
-
 // Kinet (DMX) Connection UDP Driver
 // const kinet = require('../drivers/kinet.js');
 
 // Arduino (Adafruit/Neopixel) Serial Port Driver
-const SerialPort = require('serialport');
+import serialMixin from '../drivers/serial';
 
 // Import Helpers
 import helpers from '../config/p5helpers.config';
@@ -23,10 +20,11 @@ export default {
   data() {
     return {
       helpers: helpers,
-      connectedToSerial: false,
-      port: false
     }
   },
+  mixins: [
+      serialMixin
+  ],
   computed: {
     playingNowShow() {
       return this.$store.state.playingNow;
@@ -45,75 +43,15 @@ export default {
     },
     numLights() {
       return parseInt(this.$store.state.numLights);
-    },
-    enableSerial() {
-      return this.$store.state.enableSerial;
-    },
-    selectedSerialPort() {
-      return this.$store.state.selectedSerialPort;
-    },
-    selectedColorMode() {
-      return this.$store.state.selectedColorMode;
     }
   },
   mounted() {
-
-    // Prepare the serial port
-    this.connectToPort();
-
     // Deploy the P5
     this.$nextTick(() => {
       this.deployToP5();
     });
   },
   methods: {
-
-    /**
-     * Handles the initial connection to a serial port, and reconnection if lost/closed or the selected port changes
-     */
-    connectToPort: function () {
-
-      SerialPort.list().then(ports => {
-        if (ports.includes(this.selectedSerialPort) === false) {
-          this.selectedSerialPort = null;
-        }
-      });
-
-      if (this.selectedSerialPort.length && this.connectedToSerial === false) {
-
-        this.port = new SerialPort(this.selectedSerialPort, {
-          baudRate: 115200,
-          parity: 'none',
-          stopBits: 1,
-          dataBits: 8,
-          autoOpen: true
-        });
-
-        this.port.on('open', () => {
-          this.connectedToSerial = true;
-        });
-
-        this.port.on('close', () => {
-          this.connectedToSerial = false;
-          dialog.showMessageBox({
-            message: 'The selected serial port is no longer available.',
-            details: 'It looks like your lights have disconnected. Try unplugging and plugging them back in - and then select the appropriate port in the settings panel.'
-          });
-        });
-
-        this.port.on('error', (error) => {
-          this.connectedToSerial = false;
-          this.selectedSerialPort = null;
-          dialog.showMessageBox({
-            message: 'There was an error with your serial port.',
-            details: 'Details: ' + error
-          });
-        });
-
-        this.port.open();
-      }
-
-    },
 
     /**
      * Preprocesses the user's code and deploys it to the global P5 instance
@@ -187,20 +125,9 @@ export default {
 
         // Output Serial Data
         if (vm.enableSerial) {
-          let outputData = [];
-          if (vm.selectedColorMode === 'RGB') {
-            for (let i = 0; i < (window.helpers.lights.count * 3); i += 3) {
-              outputData.push(data[i], data[i + 1], data[i + 2]);
-            }
-          } else {
-            for (let i = 0; i < (window.helpers.lights.count * 4); i += 4) {
-              outputData.push(data[i], data[i + 1], data[i + 2], data[i + 3]);
-            }
-          }
-          if (vm.connectedToSerial) {
-            vm.port.write(Buffer.from(outputData));
-          }
+          vm.outputOverSerial(data);
         }
+
         // kinet.sendKinetStrands(data);
       }
 
@@ -440,11 +367,6 @@ export default {
     lightsOn: {
       handler() {
         this.deployToP5();
-      }
-    },
-    selectedSerialPort: {
-      handler() {
-        this.connectToPort();
       }
     }
   }
