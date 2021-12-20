@@ -101,6 +101,7 @@ export default {
     this.setHomeFilter(this.filterOptions[0]); // 'All shows'
     this.$store.commit('sortShows');
     this.$store.commit('restorePublishedShow');
+    this.$store.commit('updateShowsFromTemplates');
   },
   data() {
     return {

@@ -18,15 +18,14 @@ import default_shows from '../starterPack/shows.js';
 // Electron Store Configuration //
 //////////////////////////////////
 
-const electronStore = window.estore || false;
-
 Vue.use(Vuex);
+
+let electronStore = window.estore || false;
 
 const store = new Vuex.Store({
     strict: process.env.NODE_ENV !== 'production',
     state: (electronStore ? electronStore.get('state') : false) || {
         // kinet: kinet_config[process.env.NODE_ENV],
-        // eslint-disable-next-line no-undef
         userUploadsPath: qs.decode(location.search.slice(1)).userDataPath,
         lightsOn: true,
         draftCodeRunning: true,
@@ -37,7 +36,6 @@ const store = new Vuex.Store({
         homeSort: 'Sort by last modified',
         previewMode: 0,
         playingNowWatcher: 0,
-        // default to Simple Colors
         playingNow: default_shows.filter(show => show.id === '3p__CK7daF')[0],
         lastPublishedShow: default_shows.filter(show => show.id === '3p__CK7daF')[0],
         editingNowId: '3p__CK7daF',
@@ -139,7 +137,6 @@ const store = new Vuex.Store({
             show.info.thumbnail = updates.src;
         },
         sortShows(state) {
-            // TODO(Anna): generalize sort fxns
             function title(a, b) {
                 // Ascending alphabetical
                 const titleA = a.info.title.toUpperCase();
@@ -166,8 +163,7 @@ const store = new Vuex.Store({
             }
 
             // By default, sort by title
-            state.shows.sort(title)
-
+            state.shows.sort(title);
             // Sort by a second metric, if requested
             if (state.homeSort === 'Sort by last played') {
                 state.shows.sort(lastPlayed);
@@ -279,6 +275,25 @@ const store = new Vuex.Store({
         },
         updatePreviewMode(state, value) {
             state.previewMode = value;
+        },
+        updateShowsFromTemplates(state) {
+            // Show library
+            state.shows.forEach((show, showIndex) => {
+                let defaultIndex = default_shows.findIndex(defaultShow => defaultShow.id === show.id);
+                if (defaultIndex > -1) {
+                    state.shows[showIndex] = default_shows[defaultIndex];
+                }
+            });
+            // Currently Published Show
+            let playingNowDefaultIndex = default_shows.findIndex(defaultShow => defaultShow.id === state.playingNow.id);
+            if (playingNowDefaultIndex > -1) {
+                state.playingNow = default_shows[playingNowDefaultIndex];
+            }
+            // Last Published Show
+            let lastPublishedShowDefaultIndex = default_shows.findIndex(defaultShow => defaultShow.id === state.lastPublishedShow.id);
+            if (lastPublishedShowDefaultIndex > -1) {
+                state.lastPublishedShow = default_shows[lastPublishedShowDefaultIndex];
+            }
         }
     },
     getters: {
@@ -325,7 +340,7 @@ const store = new Vuex.Store({
 })
 
 // Subscribe to Vuex store mutations.
-// On every mutation, uppate the persistent electronStore.
+// On every mutation, update the persistent electronStore.
 store.subscribe(() => {
     electronStore.set('state', store.state);
 })

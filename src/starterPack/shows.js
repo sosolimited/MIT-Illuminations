@@ -8,10 +8,10 @@ module.exports = [
     {
         id: '3p__CK7daF',
         info: {
-            title: 'Simple Colors',
+            title: 'Simple Gradient',
             description:
                 'Set the lights to a single color or simple gradient.',
-            longDescription: 'This simple lightshow transforms the space through color',
+            longDescription: 'This simple light show transforms the space through color',
             contributors: 'Sosolimited',
             thumbnail: '3p__CK7daF.png',
             thumbnailData: null,
@@ -168,8 +168,8 @@ module.exports = [
                 id: 'speed',
                 name: 'Speed',
                 type: 'number',
-                min: -20,
-                max: 20,
+                min: -10,
+                max: 10,
                 step: 1,
                 value: 2
             }
