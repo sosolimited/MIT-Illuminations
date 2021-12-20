@@ -1,46 +1,43 @@
-// Based in PiLights controller created by SOSO Limited
-// More info at: https://github.com/sosolimited/PiLights
+/* //////////// */
+/* KiNET Driver */
+/* //////////// */
 
-// import store from '../src/store'
+const kinetMixin = {
+    data(){
+        return{
+            kinetPort: 6038,
+            kinetHeader: [
+                0x04,
+                0x01,
+                0xdc,
+                0x4a, // magic number
+                0x02,
+                0x00, // kinet version
+                0x08,
+                0x01, // packet type ("PORTOUT")
+                0x00,
+                0x00,
+                0x00,
+                0x00, // set these to 0; unused packet ordering feature
+                0xff,
+                0xff,
+                0xff,
+                0xff, // universe; FF FF FF FF is "don't care"
+                0x01, // Port on device controller -- 0x01 - 0x10 (1-16)
+                0x00, // pad, unused
+                0x01,
+                0x00, // flags -- "originally 0x01,0x00, 04 00 for sync"
+                50,
+                0x00, // # of bytes (color vals) in kinet payload; 0 - 512
+                0x00,
+                0x00 // 0x0FFF = ChromASIC-based lights; 0x0000 = non-CA lights
+            ]
+        }
+    }
+}
 
-//var logger = require('winston');
-// const config = require('@/config/kinet.config.js');
+module.exports = kinetMixin;
 
-// Load the kinet config from the vuex, which has logic built in
-// to know whether in dev/prod mode and whether or not to look
-// for a local config in the machine's userData path.
-const store = require('@/store')
-const config = store.default.getters.kinet
-
-const kProtocolPort = 6038
-//const kinet_max_lights = Math.floor(512 / 3);
-
-var kV2Header = [
-    0x04,
-    0x01,
-    0xdc,
-    0x4a, // magic number
-    0x02,
-    0x00, // kinet version
-    0x08,
-    0x01, // packet type ("PORTOUT")
-    0x00,
-    0x00,
-    0x00,
-    0x00, // set these to 0; unused packet ordering feature
-    0xff,
-    0xff,
-    0xff,
-    0xff, // universe; FF FF FF FF is "don't care"
-    0x01, // Port on device controller -- 0x01 - 0x10 (1-16)
-    0x00, // pad, unused
-    0x01,
-    0x00, // flags -- "originally 0x01,0x00, 04 00 for sync"
-    50,
-    0x00, // # of bytes (color vals) in kinet payload; 0 - 512
-    0x00,
-    0x00 // 0x0FFF = ChromASIC-based lights; 0x0000 = non-CA lights
-]
 
 let sendSocket = false;
 if(window.dgram){
@@ -59,17 +56,17 @@ function sendKinetV2(data, supplyIP, supplyPort) {
     }
 
     // set target port in header
-    kV2Header[16] = supplyPort
+    this.kinetHeader[16] = supplyPort
 
     // need correct endian-ness for 2 byte data length field
     var first8 = data.length >> 8
     var last8 = data.length & 0x00ff
 
-    kV2Header[20] = last8
-    kV2Header[21] = first8
+    this.kinetHeader[20] = last8
+    this.kinetHeader[21] = first8
 
     if(sendSocket !== false){
-        sendSocket(Buffer.from(kV2Header.concat(data)), kProtocolPort, supplyIP)
+        sendSocket(Buffer.from(this.kinetHeader.concat(data)), this.kinetPort, supplyIP)
     }
 }
 
