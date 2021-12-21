@@ -129,7 +129,7 @@ const store = new Vuex.Store({
                 // Descending numerical
                 const lastPlayedA = a.lastPlayed;
                 const lastPlayedB = b.lastPlayed;
-                let comparison = 0;
+                let comparison;
                 comparison = lastPlayedA > lastPlayedB ? -1 : 1;
                 return comparison;
             }
@@ -138,7 +138,7 @@ const store = new Vuex.Store({
                 // Descending numerical
                 const lastModifiedA = a.lastModified;
                 const lastModifiedB = b.lastModified;
-                let comparison = 0;
+                let comparison;
                 comparison = lastModifiedA > lastModifiedB ? -1 : 1;
                 return comparison;
             }
@@ -207,9 +207,9 @@ const store = new Vuex.Store({
         },
         filteredShows(state) {
             let shows = state.shows;
-            if (state.homeFilter == 'Templates') {
+            if (state.homeFilter === 'Templates') {
                 shows = state.shows.filter((show) => show.template);
-            } else if (state.homeFilter == 'Favorites') {
+            } else if (state.homeFilter === 'Favorites') {
                 shows = state.shows.filter((show) => show.info.favorite);
             }
             return shows;

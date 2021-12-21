@@ -23,7 +23,7 @@ export default {
     }
   },
   mixins: [
-      serialMixin
+    serialMixin
   ],
   computed: {
     playingNowShow() {
@@ -108,15 +108,15 @@ export default {
           let RGB = p5.get(x, y);
           RGB.splice(3, 1);
           // Convert to RGB+W if needed
-          if (vm.selectedColorMode === 'RGB + W'){
-            let M = Math.max(RGB[0],RGB[1],RGB[2]);
-            let m = Math.min(RGB[0],RGB[1],RGB[2]);
-            let Wo = (m/M < 0.5) ? ( (m*M) / (M-m) ) : M;
+          if (vm.selectedColorMode === 'RGB + W') {
+            let M = Math.max(RGB[0], RGB[1], RGB[2]);
+            let m = Math.min(RGB[0], RGB[1], RGB[2]);
+            let Wo = (m / M < 0.5) ? ((m * M) / (M - m)) : M;
             let K = (Wo + M) / M;
             let outputRGB = [];
-            outputRGB[0] = Math.floor[ ( K * RGB[0] ) - Wo ];
-            outputRGB[1] = Math.floor[ ( K * RGB[1] ) - Wo ];
-            outputRGB[2] = Math.floor[ ( K * RGB[2] ) - Wo ];
+            outputRGB[0] = Math.floor[(K * RGB[0]) - Wo];
+            outputRGB[1] = Math.floor[(K * RGB[1]) - Wo];
+            outputRGB[2] = Math.floor[(K * RGB[2]) - Wo];
             outputRGB[3] = Wo;
             RGB = outputRGB;
           }

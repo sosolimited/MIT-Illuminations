@@ -90,7 +90,7 @@
 import HomeCard from '../components/HomeCard.vue'
 import router from '../router'
 import {nanoid} from 'nanoid'
-import {boilerplate} from '../starterPack'
+import {boilerplate} from '@/starterPack'
 
 export default {
   name: 'Home',

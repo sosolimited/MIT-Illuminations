@@ -1,7 +1,7 @@
 <template>
-  <v-app-bar color="white" id="header" elevation="1" height="60">
-    <div v-on:click="returnToHome()" style="display: flex; align-items: center; cursor: pointer;">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/0/0c/MIT_logo.svg" alt="MIT Logo (SVG)" class="header__logo">
+  <v-app-bar id="header" color="white" elevation="1" height="60">
+    <div style="display: flex; align-items: center; cursor: pointer;" v-on:click="returnToHome()">
+      <img alt="MIT Logo (SVG)" class="header__logo" src="https://upload.wikimedia.org/wikipedia/commons/0/0c/MIT_logo.svg">
       <div id="header-title">Illuminations — Turn P5 Code into Light Shows</div>
     </div>
     <v-spacer></v-spacer>
@@ -40,7 +40,7 @@ export default {
     toggleLightsStatus() {
       this.$store.commit('toggleLightsStatus')
     },
-    returnToHome(){
+    returnToHome() {
       this.$router.push({name: 'home'});
     }
   }

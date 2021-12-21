@@ -1,15 +1,15 @@
 <template>
-  <v-card class="mx-20" width="300" elevation="2" height="100%" :disabled="readonly">
+  <v-card :disabled="readonly" class="mx-20" elevation="2" height="100%" width="300">
     <v-card-subtitle class="pa-0 mx-2 mt-4 font-weight-bold">
       {{ controlObj.name }} {{ controlIsUsedInCode ? '' : ' (unused)' }}
     </v-card-subtitle>
     <v-card-subtitle
-        class="pa-0 mx-2 mb-4"
         v-if="controlObj.type.toLowerCase() !== 'image'"
+        class="pa-0 mx-2 mb-4"
     >
       {{ `controls.${controlObj.id}.value = ${controlObj.value}` }}
     </v-card-subtitle>
-    <v-card-subtitle class="pa-0 mx-2 mb-4" v-else>
+    <v-card-subtitle v-else class="pa-0 mx-2 mb-4">
       {{ `p5.loadControlImage(controls.${controlObj.id}.value)` }}
     </v-card-subtitle>
 
@@ -27,11 +27,11 @@
       </v-col>
       <v-col cols="10">
         <v-slider
-            dense
-            :min="controlObj.min"
             :max="controlObj.max"
+            :min="controlObj.min"
             :step="controlObj.step"
             :value="controlObj.value"
+            dense
             @end="updateControlValue"
         ></v-slider>
       </v-col>
@@ -42,32 +42,32 @@
 
     <!-- IMAGE UPLOADER -->
     <v-img
-        class="mt-5 mb-2"
         v-if="controlObj.type.toLowerCase() === 'image'"
         :src="assetSrc"
+        class="mt-5 mb-2"
     >
     </v-img>
     <v-file-input
         v-if="controlObj.type.toLowerCase() === 'image'"
+        :clearable="false"
         accept=".png"
         class="mx-3"
-        :clearable="false"
         dense
         prepend-icon="mdi-file-upload"
         @change="copyAsset"
     ></v-file-input>
 
     <!-- Card Description -->
-    <v-card-subtitle class="pa-0 mx-2" v-if="controlObj.description">
+    <v-card-subtitle v-if="controlObj.description" class="pa-0 mx-2">
       {{ controlObj.description }}
     </v-card-subtitle>
 
     <v-card-actions>
       <v-btn
           :disabled="controlIsUsedInCode"
+          color="red"
           small
           text
-          color="red"
           @click="deleteUnusedControl"
       >
         Delete control

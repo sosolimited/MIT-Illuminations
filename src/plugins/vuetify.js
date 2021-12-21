@@ -11,7 +11,7 @@ const opts = {
     icons: {
         iconfont: 'mdi'
     },
-    theme: { dark: false }
+    theme: {dark: false}
 }
 
 export default new Vuetify(opts)

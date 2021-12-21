@@ -1,6 +1,6 @@
 'use strict'
 
-import {app, protocol, BrowserWindow, Menu} from 'electron'
+import {app, BrowserWindow, Menu, protocol} from 'electron'
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
 import {copyAssets} from './assets'
 
@@ -57,13 +57,13 @@ function createWindow() {
                 {
                     label: 'About Illuminations',
                     click() {
-                        shell.openExternal('https://illuminations.mit.edu/')
+                        shell.openExternal('https://illuminations.mit.edu/').catch(console.log);
                     }
                 },
                 {
                     label: 'Bug Report / Feature Request',
                     click() {
-                        shell.openExternal('https://github.com/sosolimited/MIT-Illuminations/issues')
+                        shell.openExternal('https://github.com/sosolimited/MIT-Illuminations/issues').catch(console.log);
                     }
                 },
             ]

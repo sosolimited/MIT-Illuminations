@@ -14,25 +14,27 @@ function copyAssets() {
     // auto generate assets list based on starter pack assets
     default_shows.forEach(show => {
         // get thumbnail
-        assets.push( show.info.thumbnail);
+        assets.push(show.info.thumbnail);
 
         // get any file input types
         Object.keys(show.controls).forEach(key => {
             const control = show.controls[key];
-            if( control.type === 'image'){
+            if (control.type === 'image') {
                 assets.push(control.value);
             }
         });
     });
 
-    assets.forEach(function(item) {
+    assets.forEach(function (item) {
         // const srcPath = path.join('src', 'assets', item);
         const srcPath = path.join(__dirname, '..', 'extraResources', item)
         const destPath = path.join(destDir, item);
 
         fse.pathExists(destPath, (err, exists) => {
             // Error in evaluation
-            if (err) { console.log(err) }
+            if (err) {
+                console.log(err)
+            }
             // Evaluation result t/f
             if (exists) {
                 // File Exists
@@ -40,7 +42,7 @@ function copyAssets() {
                 // Assets Copying
                 fse.copy(srcPath, destPath, (err) => {
                     if (err) return console.error(err)
-                });
+                }).catch(console.log);
             }
         })
     })
