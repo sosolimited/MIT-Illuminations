@@ -4,7 +4,7 @@ const fse = require('fs-extra')
 const path = require('path')
 const qs = require('querystring');
 
-const kSocket = dgram.createSocket('udp4') // IPv4
+const kinetSocket = dgram.createSocket('udp4') // IPv4
 
 // User data path. This is where we want electron-store to keep
 // config.json, which holds all persistent settings for the app (e.g.
@@ -32,7 +32,7 @@ const estore = new electronStore({
 
 window.dgram = {};
 window.dgram.send = (buf, port, ip) => {
-    kSocket.send(buf, port, ip)
+    kinet.send(buf, port, ip);
 };
 
 window.estore = estore;

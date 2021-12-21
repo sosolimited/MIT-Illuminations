@@ -8,12 +8,6 @@ import qs from 'querystring';
 
 import default_shows from '../starterPack/shows.js';
 
-/////////////////////////
-// Kinet Configuration //
-/////////////////////////
-
-// const kinet_config = require('@/config/kinet.config.js'); // Used if no config.js in local store
-
 //////////////////////////////////
 // Electron Store Configuration //
 //////////////////////////////////
@@ -25,7 +19,6 @@ let electronStore = window.estore || false;
 const store = new Vuex.Store({
     strict: process.env.NODE_ENV !== 'production',
     state: (electronStore ? electronStore.get('state') : false) || {
-        // kinet: kinet_config[process.env.NODE_ENV],
         userUploadsPath: qs.decode(location.search.slice(1)).userDataPath,
         lightsOn: true,
         draftCodeRunning: true,
@@ -41,11 +34,27 @@ const store = new Vuex.Store({
         editingNowId: '3p__CK7daF',
         shows: default_shows,
         numLights: 30,
-        enableSerial: true,
+        enableSerial: false,
         selectedSerialPort: '',
-        selectedColorMode: 'RGB'
+        selectedColorMode: 'RGB',
+        enableKinet: false,
+        kinetStrands: [
+            {
+                ip: '127.0.0.1',
+                port: 1,
+                numLights: 30
+            }
+        ],
     },
     mutations: {
+        // Update whether or not to output light sampling to the kiNET driver
+        updateEnableKinet(state, boolean) {
+            state.enableKinet = boolean;
+        },
+        // Update the array of connection details for each KiNET strand
+        updateKinetStrands(state, strands) {
+            state.kinetStrands = strands;
+        },
         // Update the number of individual LEDs to output / preview
         updateNumLights(state, number) {
             state.numLights = number;

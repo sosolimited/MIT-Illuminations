@@ -39,8 +39,8 @@
         <v-tabs-slider color="blue accent-3"></v-tabs-slider>
 
         <v-tab href="#settings-general">General</v-tab>
-        <!--<v-tab href="#settings-kinet">KiNET</v-tab> -->
         <v-tab href="#settings-serial">Arduino / Serial</v-tab>
+        <v-tab href="#settings-kinet">Phillips / KiNET</v-tab>
 
 
         <v-tabs-items v-model="currentTab">
@@ -72,81 +72,90 @@
               </v-list>
             </v-card-text>
           </v-tab-item>
-          <!--          <v-tab-item value="settings-kinet">
-                      <v-card-text>
-                        <v-list>
-                          <v-subheader>Configure the KiNET driver to output your light show for Phillips Color Kinetics products.</v-subheader>
-                          <v-list-item>
-                            <v-list-item-action>
-                              <v-checkbox v-model="enableKinet"></v-checkbox>
-                            </v-list-item-action>
-                            <v-list-item-content>
-                              <v-list-item-title>Enable KiNET Output</v-list-item-title>
-                            </v-list-item-content>
-                          </v-list-item>
-                          <v-list-item>
-                            <v-list-item-content>
-                              <v-data-table
-                                  :headers="[
+          <v-tab-item value="settings-kinet">
+            <v-card-text>
+              <v-list>
+                <v-subheader>Configure the KiNET driver to output your light show for Phillips Color Kinetics products. You can define multiple strands of KiNET lights at different IP addresses and ports.</v-subheader>
+                <v-list-item>
+                  <v-list-item-action>
+                    <v-checkbox v-model="enableKinet"></v-checkbox>
+                  </v-list-item-action>
+                  <v-list-item-content>
+                    <v-list-item-title>Enable KiNET Output</v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-content>
+                    <v-btn class="mb-4" @click="addKinetStrand" small style="max-width:200px;" color="primary">Add KiNET Strand</v-btn>
+                    <v-data-table
+                        :headers="[
                                         {
                                           text: 'IP Address',
                                           value: 'ip',
                                         },
                                         { text: 'Port Number', value: 'port' },
                                         { text: 'Number of Lights', value: 'numLights' },
+                                        { text: '', value: 'actions', sortable: false }
                                     ]"
-                                  :items="kinetStrands"
-                              >
-                                <template v-slot:item.ip="props">
-                                  <v-edit-dialog
-                                      :return-value.sync="props.item.ip"
-                                  >
-                                    {{ props.item.ip }}
-                                    <template v-slot:input>
-                                      <v-text-field
-                                          v-model="props.item.ip"
-                                          label="Set IP Address"
-                                          single-line
-                                      ></v-text-field>
-                                    </template>
-                                  </v-edit-dialog>
-                                </template>
-                                <template v-slot:item.port="props">
-                                  <v-edit-dialog
-                                      :return-value.sync="props.item.port"
-                                  >
-                                    {{ props.item.port }}
-                                    <template v-slot:input>
-                                      <v-text-field
-                                          v-model="props.item.port"
-                                          label="Set Port"
-                                          single-line
-                                          type="number"
-                                      ></v-text-field>
-                                    </template>
-                                  </v-edit-dialog>
-                                </template>
-                                <template v-slot:item.numLights="props">
-                                  <v-edit-dialog
-                                      :return-value.sync="props.item.numLights"
-                                  >
-                                    {{ props.item.numLights }}
-                                    <template v-slot:input>
-                                      <v-text-field
-                                          v-model="props.item.numLights"
-                                          label="How Many Lights?"
-                                          single-line
-                                          type="number"
-                                      ></v-text-field>
-                                    </template>
-                                  </v-edit-dialog>
-                                </template>
-                              </v-data-table>
-                            </v-list-item-content>
-                          </v-list-item>
-                        </v-list>
-                      </v-card-text>
-                    </v-tab-item>-->
+                        :items="kinetStrands"
+                        item-key="ip"
+                    >
+                      <template v-slot:item.ip="props">
+                        <v-edit-dialog
+                            :return-value.sync="props.item.ip"
+                        >
+                          {{ props.item.ip }}
+                          <template v-slot:input>
+                            <v-text-field
+                                v-model="props.item.ip"
+                                label="Set IP Address"
+                                single-line
+                            ></v-text-field>
+                          </template>
+                        </v-edit-dialog>
+                      </template>
+                      <template v-slot:item.port="props">
+                        <v-edit-dialog
+                            :return-value.sync="props.item.port"
+                        >
+                          {{ props.item.port }}
+                          <template v-slot:input>
+                            <v-text-field
+                                v-model="props.item.port"
+                                label="Set Port"
+                                single-line
+                                type="number"
+                            ></v-text-field>
+                          </template>
+                        </v-edit-dialog>
+                      </template>
+                      <template v-slot:item.numLights="props">
+                        <v-edit-dialog
+                            :return-value.sync="props.item.numLights"
+                        >
+                          {{ props.item.numLights }}
+                          <template v-slot:input>
+                            <v-text-field
+                                v-model="props.item.numLights"
+                                label="How Many Lights?"
+                                single-line
+                                type="number"
+                            ></v-text-field>
+                          </template>
+                        </v-edit-dialog>
+                      </template>
+                      <template v-slot:item.actions="{ item }">
+                        <v-btn small @click="deleteKinetStrand(item)" :disabled="kinetStrands.length === 1">Delete</v-btn>
+                      </template>
+                      <template slot="no-data">
+                        Click the button above to add your first strand of KiNET lights.
+                      </template>
+                    </v-data-table>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </v-card-text>
+          </v-tab-item>
           <v-tab-item value="settings-serial">
             <v-card-text>
               <v-list>
@@ -202,19 +211,6 @@ export default {
     return {
       currentTab: 'settings-kinet',
       settingsDialog: false,
-      enableKinet: true,
-      kinetStrands: [
-        {
-          ip: '127.0.0.1',
-          port: 1,
-          numLights: 64
-        },
-        {
-          ip: '127.0.0.1',
-          port: 1,
-          numLights: 56
-        }
-      ],
       availableSerialPorts: []
     }
   },
@@ -228,6 +224,29 @@ export default {
       },
       set(value) {
         this.$store.commit('updateNumLights', value)
+      }
+    },
+    enableKinet: {
+      get() {
+        return this.$store.state.enableKinet;
+      },
+      set(value) {
+        this.$store.commit('updateEnableKinet', value)
+      }
+    },
+    kinetStrands: {
+      get() {
+        // Allows for a default strand if kinetStrands is not set
+        return this.$store.state.kinetStrands || [
+          {
+            ip: '127.0.0.1',
+            port: 1,
+            numLights: 30
+          }
+        ];
+      },
+      set(value) {
+        this.$store.commit('updateKinetStrands', value)
       }
     },
     enableSerial: {
@@ -283,7 +302,41 @@ export default {
       }).catch(error => {
         console.log(error);
       });
+    },
+
+    /**
+     * Adds a strand to the KiNET configuration
+     */
+    addKinetStrand: function () {
+      const outputStrands = this.$store.state.kinetStrands;
+      outputStrands.push(
+          {
+            ip: '127.0.0.0',
+            port: 1,
+            numLights: this.numLights
+          }
+      );
+      this.$store.commit('updateKinetStrands', outputStrands);
+      this.$nextTick(() => {
+        this.$forceUpdate();
+      });
+    },
+
+    /**
+     * Deletes a kiNET strand from the configuration
+     */
+    deleteKinetStrand: function (strand) {
+      const outputStrands = this.kinetStrands || [];
+      const deleteIndex = outputStrands.indexOf(strand);
+      if (deleteIndex > -1) {
+        outputStrands.splice(deleteIndex, 1);
+      }
+      this.$store.commit('updateKinetStrands', outputStrands);
+      this.$nextTick(() => {
+        this.$forceUpdate();
+      });
     }
+
   },
   mounted() {
     this.updatePortList();

@@ -34,23 +34,6 @@ function createWindow() {
 
     // Define the application file menu
     const fileMenu = Menu.buildFromTemplate([
-        /*{
-            label: 'File',
-            submenu: [
-                {
-                    label: 'New Show'
-                },
-                {
-                    type:'separator'
-                },
-                {
-                    label: 'Exit',
-                    click() {
-                        app.quit()
-                    }
-                }
-            ]
-        },*/
         {
             label: 'Support',
             submenu: [
@@ -59,6 +42,9 @@ function createWindow() {
                     click() {
                         shell.openExternal('https://illuminations.mit.edu/').catch(console.log);
                     }
+                },
+                {
+                    role: 'toggleDevTools'
                 },
                 {
                     label: 'Bug Report / Feature Request',

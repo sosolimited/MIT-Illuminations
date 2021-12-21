@@ -6,8 +6,8 @@
 
 <script>
 
-// Kinet (DMX) Connection UDP Driver
-// const kinet = require('../drivers/kinet.js');
+// Phillips ColorKinetics KiNET Driver
+import kinetMixin from '../drivers/kinet';
 
 // Arduino (Adafruit/Neopixel) Serial Port Driver
 import serialMixin from '../drivers/serial';
@@ -23,7 +23,8 @@ export default {
     }
   },
   mixins: [
-    serialMixin
+    serialMixin,
+    kinetMixin
   ],
   computed: {
     playingNowShow() {
@@ -128,7 +129,11 @@ export default {
           vm.outputOverSerial(data);
         }
 
-        // kinet.sendKinetStrands(data);
+        // Output KiNET Data
+        if (vm.enableKinet) {
+          vm.outputOverKinet(data);
+        }
+
       }
 
       /**
