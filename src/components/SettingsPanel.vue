@@ -1,9 +1,9 @@
 <template>
   <v-dialog
       v-model="settingsDialog"
+      scrollable
       transition="dialog-bottom-transition"
       width="800"
-      scrollable
   >
     <template v-slot:activator="{ on, attrs }">
       <v-btn
@@ -17,13 +17,13 @@
     </template>
     <v-card tile>
       <v-toolbar
-          flat
-          dark
           color="primary"
+          dark
+          flat
       >
         <v-btn
-            icon
             dark
+            icon
             @click="settingsDialog = false"
         >
           <v-icon>mdi-close</v-icon>
@@ -31,10 +31,10 @@
         <v-toolbar-title>Settings</v-toolbar-title>
       </v-toolbar>
       <v-tabs
-          dark
-          background-color="blue darken-3"
-          show-arrows
           v-model="currentTab"
+          background-color="blue darken-3"
+          dark
+          show-arrows
       >
         <v-tabs-slider color="blue accent-3"></v-tabs-slider>
 
@@ -53,19 +53,19 @@
                 <v-list-item>
                   <v-list-item-content>
                     <v-text-field
-                        label="Number of lights"
-                        required
-                        placeholder="How many LEDs are you outputting your light shows to?"
                         v-model="numLights"
+                        label="Number of lights"
+                        placeholder="How many LEDs are you outputting your light shows to?"
+                        required
                     ></v-text-field>
                   </v-list-item-content>
                 </v-list-item>
                 <v-list-item>
                   <v-list-item-content>
                     <v-select
+                        v-model="selectedColorMode"
                         :items="['RGB', 'RGB + W']"
                         label="Color mode"
-                        v-model="selectedColorMode"
                     ></v-select>
                   </v-list-item-content>
                 </v-list-item>
@@ -153,7 +153,10 @@
                 <v-subheader>Configure the serial port to output your light show for Arduino / Adafruit Neopixel products.</v-subheader>
                 <v-list-item>
                   <v-list-item-content>
-                    <v-alert text type="info">Heads up! Sending data over serial port won't work until you've <a href="#" @click.prevent="openExternalPage('https://github.com/adafruit/Adafruit_NeoPixel')">installed the Neopixel library</a> and have uploaded the <a href="#" @click.prevent="openExternalPage('https://github.com/sosolimited/MIT-Illuminations/blob/master/arduino/illuminations.ino')">Illuminations sketch file</a> to your Arduino.</v-alert>
+                    <v-alert text type="info">Heads up! Sending data over serial port won't work until you've
+                      <a href="#" @click.prevent="openExternalPage('https://github.com/adafruit/Adafruit_NeoPixel')">installed the Neopixel library</a> and have uploaded the
+                      <a href="#" @click.prevent="openExternalPage('https://github.com/sosolimited/MIT-Illuminations/blob/master/arduino/illuminations.ino')">Illuminations sketch file</a> to your Arduino.
+                    </v-alert>
                   </v-list-item-content>
                 </v-list-item>
                 <v-list-item>
@@ -167,9 +170,9 @@
                 <v-list-item>
                   <v-list-item-content>
                     <v-select
+                        v-model="selectedSerialPort"
                         :items="availableSerialPorts"
                         label="Select a Serial Port"
-                        v-model="selectedSerialPort"
                     ></v-select>
                   </v-list-item-content>
                 </v-list-item>
@@ -258,7 +261,7 @@ export default {
      * Open external documentation in the default browser
      * @param url
      */
-    openExternalPage: function(url){
+    openExternalPage: function (url) {
       shell.openExternal(url);
     },
 

@@ -1,13 +1,9 @@
 <template>
-  <!--
-      TODO(Anna): V-hover around card on hover?
-      https://vuetifyjs.com/en/components/hover/
-  -->
   <v-card v-if="!show.deleted" class="preview-card" style="width:100%">
     <!-- Thumbnail -->
     <v-img
-        class="card-image"
         :src="thumbnailSrc"
+        class="card-image"
         @click="routeToEditor"
     ></v-img>
     <div
@@ -26,18 +22,18 @@
     <v-card-text class="card-description">{{ description }}</v-card-text>
     <v-card-actions>
       <!-- Actions -->
-      <v-btn @click="routeToEditor" color="indigo lighten-2" text small
+      <v-btn color="indigo lighten-2" small text @click="routeToEditor"
       >Edit Show
       </v-btn
       >
       <v-spacer></v-spacer>
       <!-- Tags -->
       <!-- <v-icon v-if="show.template" small class="pr-2">mdi-lock</v-icon> -->
-      <v-icon v-if="show.info.favorite" small class="pr-2"
+      <v-icon v-if="show.info.favorite" class="pr-2" small
       >mdi-heart
       </v-icon
       >
-      <v-icon v-else small class="pr-2">mdi-heart-outline</v-icon>
+      <v-icon v-else class="pr-2" small>mdi-heart-outline</v-icon>
       <!-- <v-icon v-if="show.playing && lightsOn" small class="pr-2" color="indigo lighten-2">mdi-lightbulb-on-outline</v-icon>
       <v-icon v-if="show.playing && !lightsOn" small class="pr-2">mdi-lightbulb-on-outline</v-icon> -->
     </v-card-actions>
@@ -85,12 +81,12 @@ export default {
 </script>
 <style scoped>
 .preview-card {
-  margin: 0px 30px 30px 0px;
+  margin: 0 30px 30px 0;
   display: inline-block;
 }
 
 .card-image {
-  border-radius: 0px;
+  border-radius: 0;
   height: 200px;
 }
 

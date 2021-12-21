@@ -90,7 +90,7 @@
 import HomeCard from '../components/HomeCard.vue'
 import router from '../router'
 import {nanoid} from 'nanoid'
-import {boilerplate} from '../starterPack'
+import {boilerplate} from '@/starterPack'
 
 export default {
   name: 'Home',
@@ -158,8 +158,6 @@ export default {
       this.$store.commit('setHomeFilter', filter)
     },
     setHomeSort(sort) {
-      // TODO(Anna): combine these mutations, as they always happen
-      // together.
       this.$store.commit('setHomeSort', sort)
       this.$store.commit('sortShows')
     }

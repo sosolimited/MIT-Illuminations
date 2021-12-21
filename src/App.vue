@@ -1,8 +1,8 @@
 <template>
   <v-app id="app">
     <Header/>
-    <canvas id="previewDisplay" width="1920" height="160" style="width: 100vw; height: 9vw; background-color: #e7e7e7;"></canvas>
-    <v-bottom-navigation v-model="previewMode" color="#292a3c" background-color="#d7eaee" horizontal elevation="1" style="width: 100%; box-shadow: none; margin-bottom: 20px">
+    <canvas id="previewDisplay" height="160" style="width: 100vw; height: 9vw; background-color: #e7e7e7;" width="1920"></canvas>
+    <v-bottom-navigation v-model="previewMode" background-color="#d7eaee" color="#292a3c" elevation="1" horizontal style="width: 100%; box-shadow: none; margin-bottom: 20px">
       <v-btn>
         <span>Light Preview</span>
         <v-icon>mdi-lightbulb-group-outline</v-icon>
@@ -98,7 +98,7 @@ export default {
 }
 
 @media only screen and (max-width: 1400px) {
-  #content{
+  #content {
     padding: 0;
   }
 }

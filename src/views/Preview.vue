@@ -1,3 +1,4 @@
+<!--suppress ES6CheckImport -->
 <template>
 
   <v-row id="content" class="justify-space-around" v-if="ready">
@@ -538,20 +539,6 @@ export default {
     userUploadsPath() {
       return this.$store.state.userUploadsPath
     },
-    uploadedMessage() {
-      let text = ''
-      if (this.isPublishedShow && !this.show.template) {
-        text = `This show is playing on the lights. ${
-            this.unsavedChanges
-                ? 'New edits will not appear on the lights until you choose UPLOAD TO LIGHTS. '
-                : ''
-        }`
-      } else if (this.isPublishedShow && this.show.template) {
-        text = 'This template is playing on the lights. '
-      }
-      return text
-    },
-
     /**
      * Display a message telling the user to duplicate the show, if it's a template.
      * @returns {string}
@@ -591,11 +578,7 @@ export default {
 
       // Reset the baseline save properties
       this.lastSavedCodeVersion = this.codeEditor
-      if (this.codeEditor !== this.lastSavedCodeVersion) {
-        this.unsavedCode = true
-      } else {
-        this.unsavedCode = false
-      }
+      this.unsavedCode = this.codeEditor !== this.lastSavedCodeVersion;
       this.unsavedControl = false
       this.unsavedInfo = false
     },
@@ -664,9 +647,6 @@ export default {
     //
     // Preview visibility
     //
-    toggleLightsVisibility() {
-      this.isComponentVisible.lights = !this.isComponentVisible.lights
-    },
     toggleControlsVisibility() {
       this.isComponentVisible.controls = !this.isComponentVisible.controls
     },
@@ -688,7 +668,7 @@ export default {
       this.isComponentVisible.consoleHelp = true
     },
     //
-    // Control udpates
+    // Control updates
     //
     updateControlValue(val, controlId) {
       this.$store.commit('updateControlValue', {
@@ -722,8 +702,6 @@ export default {
     }
   },
   watch: {
-    // TODO(Anna): This could be handled all internally to this
-    // component by creating a temp controls object.
     controls: {
       handler() {
         if (this.isCodeRunning) {
@@ -736,11 +714,7 @@ export default {
     // Watch for unsaved changes
     codeEditor: {
       handler() {
-        if (this.codeEditor !== this.lastSavedCodeVersion) {
-          this.unsavedCode = true
-        } else {
-          this.unsavedCode = false
-        }
+        this.unsavedCode = this.codeEditor !== this.lastSavedCodeVersion;
       }
     },
 
@@ -801,11 +775,7 @@ canvas {
 }
 
 pre {
-  white-space: pre-wrap; /* css-3 */
-  white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
-  white-space: -pre-wrap; /* Opera 4-6 */
-  white-space: -o-pre-wrap; /* Opera 7 */
-  word-wrap: break-word; /* Internet Explorer 5.5+ */
+  white-space: pre-wrap;
 }
 
 .card-img-thumb {
@@ -820,7 +790,7 @@ pre {
 }
 
 #code-header {
-  margin: 0px 8px;
+  margin: 0 8px;
 }
 
 .console-more {
@@ -858,7 +828,7 @@ pre {
 }
 
 .card-image {
-  border-radius: 0px;
+  border-radius: 0;
   height: 200px;
 }
 

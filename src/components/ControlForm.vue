@@ -1,13 +1,13 @@
 <template>
   <v-row justify="center">
-    <v-dialog v-model="dialog" persistent max-width="600px">
+    <v-dialog v-model="dialog" max-width="600px" persistent>
       <template v-slot:activator="{ on, attrs }">
         <v-btn
             :disabled="readonly"
             class="mr-4 mt-8"
+            outlined
             small
             text
-            outlined
             v-bind="attrs"
             v-on="on"
         >
@@ -26,93 +26,64 @@
                 <!-- Control type -->
                 <v-col cols="6">
                   <v-select
+                      v-model="controlObj.type"
                       :items="['Color', 'Number', 'Image']"
                       label="Control type"
-                      required
                       outlined
-                      v-model="controlObj.type"
+                      required
                   ></v-select>
                 </v-col>
 
                 <!-- Control name -->
                 <v-col cols="6">
                   <v-text-field
-                      label="Control name"
-                      required
-                      outlined
-                      :hint="controlObj.name ? 'Use this variable in your code: controls.' + toCamelCase(controlObj.name) + '.value' : ''"
-                      persistent-hint
                       v-model="controlObj.name"
+                      :hint="controlObj.name ? 'Use this variable in your code: controls.' + toCamelCase(controlObj.name) + '.value' : ''"
                       :rules="rules.name"
+                      label="Control name"
+                      outlined
+                      persistent-hint
+                      required
                   ></v-text-field>
                 </v-col>
-
-                <!-- Control id (readonly) -->
-<!--                <v-col cols="6">
-                  <v-text-field
-                      label="Control ID"
-                      persistent-hint
-                      hint="Auto-generated ID based on control name"
-                      readonly
-                      :value="toCamelCase(controlObj.name)"
-                  ></v-text-field>
-                </v-col>-->
 
                 <!-- Number-specific -->
-                <v-col
-                    cols="4"
-                    v-if="
-                                        controlObj.type.toLowerCase() ===
-                                        'number'
-                                    "
-                >
+                <v-col v-if="controlObj.type.toLowerCase() ==='number'" cols="4">
                   <v-text-field
-                      type="number"
-                      label="Minimum"
-                      hint="The minimum allowed value"
                       v-model="controlObj.min"
+                      hint="The minimum allowed value"
+                      label="Minimum"
                       required
+                      type="number"
                   ></v-text-field>
                 </v-col>
-                <v-col
-                    cols="4"
-                    v-if="
-                                        controlObj.type.toLowerCase() ===
-                                        'number'
-                                    "
-                >
+                <v-col v-if="controlObj.type.toLowerCase() ==='number'" cols="4">
                   <v-text-field
-                      type="number"
-                      label="Maximum"
-                      hint="The maximum allowed value"
                       v-model="controlObj.max"
+                      hint="The maximum allowed value"
+                      label="Maximum"
                       required
+                      type="number"
                   ></v-text-field>
                 </v-col>
-                <v-col
-                    cols="4"
-                    v-if="
-                                        controlObj.type.toLowerCase() ===
-                                        'number'
-                                    "
-                >
+                <v-col v-if="controlObj.type.toLowerCase() ==='number'" cols="4">
                   <v-text-field
-                      type="number"
-                      label="Step"
-                      hint="The step between allowed values"
                       v-model="controlObj.step"
+                      hint="The step between allowed values"
+                      label="Step"
                       required
+                      type="number"
                   ></v-text-field>
                 </v-col>
 
                 <!-- Control description -->
                 <v-col cols="12">
                   <v-text-field
-                      label="Description"
                       v-model="controlObj.description"
                       hint="Add some notes to help people understand how this control impacts the code (optional)"
-                      persistent-hint
+                      label="Description"
                       outlined
+                      persistent-hint
                   ></v-text-field>
                 </v-col>
 
@@ -126,14 +97,7 @@
           <v-btn color="blue darken-1" text @click="close">
             Close
           </v-btn>
-          <v-btn
-              color="blue darken-1"
-              text
-              @click="saveAndClose"
-              :disabled="!valid"
-          >
-            Save
-          </v-btn>
+          <v-btn :disabled="!valid" color="blue darken-1" text @click="saveAndClose">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -141,14 +105,6 @@
 </template>
 
 <script>
-/* TODO:
-    - Add rule: control ID cannot already be in use
-    - Add rule: min/max/step values make sense
-    - ----
-    - Nice-to-have: checkbox control
-    - Nice-to-have: text field control
-    - Nice-to-have: show min/max/value on slider
-*/
 export default {
   name: 'ControlForm',
   props: {
@@ -187,7 +143,6 @@ export default {
       return this.$route.params.id
     },
     value() {
-      // Default values for new controls
       if (this.controlObj.type.toLowerCase() === 'color') {
         return '#EC3131'
       } else if (this.controlObj.type.toLowerCase() === 'image') {
@@ -205,9 +160,8 @@ export default {
       this.$refs.controlForm.resetValidation()
     },
     toCamelCase(str) {
-      // https://stackoverflow.com/questions/2970525/converting-any-string-into-camel-case
       return str.replace(
-          /(?:^\w|[A-Z]|\b\w|\s+)/g,
+          /^\w|[A-Z]|\b\w|\s+/g,
           function (match, index) {
             if (+match === 0) return ''
             return index === 0

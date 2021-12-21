@@ -1,24 +1,5 @@
 export default {
     methods: {
-        //
-        // Parse code, and create new p5 sketch
-        //
-        runCode() {
-            // console.log("Safe to remove runCode()")
-        },
-        //
-        // Parses the users code, and adds some custom features
-        // - reroutes console log to DOM
-        // - adds try / catch statements
-        //
-        // TODO(Anna):
-        // - Bug: if an error occurs in the setup, the canvas is not
-        //        re-rendered after the error is fixed
-        // - Featuer (nice-to-have): Dark/light illuminationsPreview overlay in p5
-        //
-        //
-        // Reroute / restore console
-        //
         rerouteConsole() {
             const logs = this.logs;
             (window.console.log = function (msg) {

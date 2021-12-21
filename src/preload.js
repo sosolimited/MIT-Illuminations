@@ -44,7 +44,7 @@ window.fse.copyAsset = (src, id) => {
 
     fse.copy(src, dest, (err) => {
         if (err) return console.error(err)
-    })
+    }).catch(console.log);
 };
 window['fse'].getBlog = (filePath) => {
     return fse.readFile(filePath)

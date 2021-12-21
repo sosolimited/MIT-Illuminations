@@ -43,7 +43,7 @@ var kV2Header = [
 ]
 
 let sendSocket = false;
-if(window.dgram){
+if (window.dgram) {
     sendSocket = window.dgram.send
 }
 
@@ -68,7 +68,7 @@ function sendKinetV2(data, supplyIP, supplyPort) {
     kV2Header[20] = last8
     kV2Header[21] = first8
 
-    if(sendSocket !== false){
+    if (sendSocket !== false) {
         sendSocket(Buffer.from(kV2Header.concat(data)), kProtocolPort, supplyIP)
     }
 }
