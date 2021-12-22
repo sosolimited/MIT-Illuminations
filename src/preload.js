@@ -32,7 +32,7 @@ const estore = new electronStore({
 
 window.dgram = {};
 window.dgram.send = (buf, port, ip) => {
-    kinet.send(buf, port, ip);
+    kinetSocket.send(buf, port, ip);
 };
 
 window.estore = estore;
