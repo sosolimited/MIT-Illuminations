@@ -97,8 +97,7 @@
                                         { text: 'Number of Lights', value: 'numLights' },
                                         { text: '', value: 'actions', sortable: false }
                                     ]"
-                        :items="kinetStrands"
-                        item-key="ip"
+                        :items="localKinetStrands"
                     >
                       <template v-slot:item.ip="props">
                         <v-edit-dialog
@@ -145,7 +144,7 @@
                         </v-edit-dialog>
                       </template>
                       <template v-slot:item.actions="{ item }">
-                        <v-btn small @click="deleteKinetStrand(item)" :disabled="kinetStrands.length === 1">Delete</v-btn>
+                        <v-btn small @click="deleteKinetStrand(item)" :disabled="localKinetStrands.length === 1">Delete</v-btn>
                       </template>
                       <template slot="no-data">
                         Click the button above to add your first strand of KiNET lights.
@@ -211,7 +210,8 @@ export default {
     return {
       currentTab: 'settings-kinet',
       settingsDialog: false,
-      availableSerialPorts: []
+      availableSerialPorts: [],
+      localKinetStrands: []
     }
   },
   props: {
@@ -232,21 +232,6 @@ export default {
       },
       set(value) {
         this.$store.commit('updateEnableKinet', value)
-      }
-    },
-    kinetStrands: {
-      get() {
-        // Allows for a default strand if kinetStrands is not set
-        return this.$store.state.kinetStrands || [
-          {
-            ip: '127.0.0.1',
-            port: 1,
-            numLights: 30
-          }
-        ];
-      },
-      set(value) {
-        this.$store.commit('updateKinetStrands', value)
       }
     },
     enableSerial: {
@@ -308,15 +293,14 @@ export default {
      * Adds a strand to the KiNET configuration
      */
     addKinetStrand: function () {
-      const outputStrands = this.$store.state.kinetStrands;
-      outputStrands.push(
+      this.localKinetStrands.push(
           {
             ip: '127.0.0.0',
             port: 1,
             numLights: this.numLights
           }
       );
-      this.$store.commit('updateKinetStrands', outputStrands);
+      this.$store.commit('updateKinetStrands', this.localKinetStrands);
       this.$nextTick(() => {
         this.$forceUpdate();
       });
@@ -326,25 +310,30 @@ export default {
      * Deletes a kiNET strand from the configuration
      */
     deleteKinetStrand: function (strand) {
-      const outputStrands = this.kinetStrands || [];
-      const deleteIndex = outputStrands.indexOf(strand);
+      const deleteIndex = this.localKinetStrands.indexOf(strand);
       if (deleteIndex > -1) {
-        outputStrands.splice(deleteIndex, 1);
+        this.localKinetStrands.splice(deleteIndex, 1);
       }
-      this.$store.commit('updateKinetStrands', outputStrands);
+      this.$store.commit('updateKinetStrands', this.localKinetStrands);
       this.$nextTick(() => {
         this.$forceUpdate();
       });
-    }
+    },
 
   },
   mounted() {
     this.updatePortList();
+    this.localKinetStrands = JSON.parse(JSON.stringify(this.$store.state.kinetStrands));
 
     // Keep our serial port list up-to-date, every 2 seconds
     setInterval(function () {
       this.updatePortList();
     }.bind(this), 2000);
+  },
+  watch: {
+    localKinetStrands: function () {
+      this.$store.commit('updateKinetStrands', this.localKinetStrands);
+    }
   }
 }
 </script>
