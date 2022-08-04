@@ -31,31 +31,7 @@ function createWindow() {
 
     // Establish the splash screen
     const splash = new BrowserWindow({width: 800, height: 500, transparent: true, frame: false, alwaysOnTop: true});
-
-    // Define the application file menu
-    const fileMenu = Menu.buildFromTemplate([
-        {
-            label: 'Support',
-            submenu: [
-                {
-                    label: 'About Illuminations',
-                    click() {
-                        shell.openExternal('https://illuminations.mit.edu/').catch(console.log);
-                    }
-                },
-                {
-                    role: 'toggleDevTools'
-                },
-                {
-                    label: 'Bug Report / Feature Request',
-                    click() {
-                        shell.openExternal('https://github.com/sosolimited/MIT-Illuminations/issues').catch(console.log);
-                    }
-                },
-            ]
-        }
-    ]);
-    Menu.setApplicationMenu(fileMenu);
+    Menu.setApplicationMenu(null);
 
     // Create the browser window.
     const win = new BrowserWindow({

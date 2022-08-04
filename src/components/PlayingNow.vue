@@ -158,9 +158,6 @@ export default {
           ctx.fillRect(0, 0, previewCanvas.width, previewCanvas.height);
           ctx.drawImage(document.getElementById('defaultCanvas0'), 0, 0, 1200, 100, 0, 0, 1920, 160);
 
-          // All done
-          return true;
-
         }
 
         // Sample Data
@@ -191,7 +188,6 @@ export default {
           // Code Preview Behind Sampled Lights
           ctx.globalCompositeOperation = 'normal';
           ctx.globalAlpha = 0.2;
-          // ctx.drawImage(document.getElementById('defaultCanvas0'), 0, 0, 1200, 100, 0, 0, 1920, 160);
           ctx.globalAlpha = 1;
 
           // Sampled Lights
@@ -331,10 +327,8 @@ export default {
       }
 
       // Must remain a constant and not directly referenced so that it can be appended to with illuminationsSampling/illuminationsPreview methods below
-      const userDefinedSetupMethod = window.setup || function () {
-      };
-      const userDefinedDrawMethod = window.draw || function () {
-      };
+      const userDefinedSetupMethod = window.setup || function () {};
+      const userDefinedDrawMethod = window.draw || function () {};
 
       window.setup = function () {
         userDefinedSetupMethod();

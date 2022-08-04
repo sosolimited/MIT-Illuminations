@@ -39,9 +39,6 @@
           <v-icon v-if="show.info.favorite" small class="pr-2">mdi-heart</v-icon>
           <v-icon v-else small class="pr-2">mdi-heart-outline</v-icon>
 
-          <!-- <v-icon v-if="show.playing && lightsOn" small class="pr-2" color="indigo lighten-2">mdi-lightbulb-on-outline</v-icon>
-          <v-icon v-if="show.playing && !lightsOn" small class="pr-2">mdi-lightbulb-on-outline</v-icon> -->
-
         </v-card-actions>
 
       </v-card>
@@ -87,15 +84,7 @@
           </v-card>
         </v-dialog>
       </div>
-      <!--
-      <v-btn
-          :disabled="show.template || isPublishedShow"
-          @click="deleteOriginal"
-          small
-          class="my-4"
-          color="error"
-      >Delete show</v-btn>
-      -->
+
     </v-card>
     </v-col>
 
@@ -634,9 +623,7 @@ export default {
     copyAsset(src) {
       const newId = nanoid(10)
       const fse = window.fse
-      fse.copyAsset(src.path, newId)
-      // TODO: Make sure this emit happens *after* copyAsset completes.
-      // Can copyAsset take a cb function as a parameter?
+      fse.copyAsset(src.path, newId);
       setTimeout(
           () =>
               this.$store.commit('updateThumbnail', {

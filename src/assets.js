@@ -26,7 +26,6 @@ function copyAssets() {
     });
 
     assets.forEach(function (item) {
-        // const srcPath = path.join('src', 'assets', item);
         const srcPath = path.join(__dirname, '..', 'extraResources', item)
         const destPath = path.join(destDir, item);
 
@@ -40,8 +39,8 @@ function copyAssets() {
                 // File Exists
             } else {
                 // Assets Copying
-                fse.copy(srcPath, destPath, (err) => {
-                    if (err) return console.error(err)
+                fse.copy(srcPath, destPath, (error) => {
+                    if (error) return console.error(error)
                 }).catch(console.log);
             }
         })

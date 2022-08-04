@@ -28,14 +28,11 @@
       >
       <v-spacer></v-spacer>
       <!-- Tags -->
-      <!-- <v-icon v-if="show.template" small class="pr-2">mdi-lock</v-icon> -->
       <v-icon v-if="show.info.favorite" class="pr-2" small
       >mdi-heart
       </v-icon
       >
       <v-icon v-else class="pr-2" small>mdi-heart-outline</v-icon>
-      <!-- <v-icon v-if="show.playing && lightsOn" small class="pr-2" color="indigo lighten-2">mdi-lightbulb-on-outline</v-icon>
-      <v-icon v-if="show.playing && !lightsOn" small class="pr-2">mdi-lightbulb-on-outline</v-icon> -->
     </v-card-actions>
   </v-card>
 </template>

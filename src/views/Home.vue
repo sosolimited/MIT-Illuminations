@@ -32,7 +32,6 @@
               </v-btn>
             </template>
             <v-list>
-              <!-- <v-list-item-group> -->
               <v-list-item
                   v-for="(item, i) in filterOptions"
                   :key="i"
@@ -46,7 +45,6 @@
                   >
                 </v-list-item-content>
               </v-list-item>
-              <!-- </v-list-item-group> -->
             </v-list>
           </v-menu>
 
