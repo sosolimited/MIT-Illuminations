@@ -29,7 +29,7 @@ const kinetMixin = {
                         return accumulator;
                     });
                 }
-                let strandData = data.slice((strandStart * 3), ((strandStart * 3) + (strand.num_lights * 3)));
+                let strandData = data.slice((strandStart * 3), ((strandStart * 3) + (strand.numLights * 3)));
                 window.dgram.send(Buffer.from([
                     0x04,
                     0x01,
@@ -47,15 +47,15 @@ const kinetMixin = {
                     0xff,
                     0xff,
                     0xff,
-                    strand.port.toString(16),
+                    strand.port,
                     0x00,
                     0x01,
                     0x00,
-                    (strandData.length & 0x00ff),
-                    (strandData.length >> 8),
+                    strandData.length & 0x00ff,
+                    strandData.length >> 8,
                     0x00,
                     0x00
-                ].concat(data)), strand.port, strand.ip);
+                ].concat(data)), 6038, strand.ip);
             });
 
         }

@@ -43,9 +43,9 @@ function createWindow() {
                         shell.openExternal('https://illuminations.mit.edu/').catch(console.log);
                     }
                 },
-                /*{
+                {
                     role: 'toggleDevTools'
-                },*/
+                },
                 {
                     label: 'Bug Report / Feature Request',
                     click() {

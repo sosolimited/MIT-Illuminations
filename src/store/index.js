@@ -189,14 +189,19 @@ const store = new Vuex.Store({
                 }
             });
             // Currently Published Show
-            let playingNowDefaultIndex = default_shows.findIndex(defaultShow => defaultShow.id === state.playingNow.id);
-            if (playingNowDefaultIndex > -1) {
-                state.playingNow = default_shows[playingNowDefaultIndex];
+            if (state.playingNow) {
+                let playingNowDefaultIndex = default_shows.findIndex(defaultShow => defaultShow.id === state.playingNow.id);
+                if (playingNowDefaultIndex > -1) {
+                    state.playingNow = default_shows[playingNowDefaultIndex];
+                }
             }
+
             // Last Published Show
-            let lastPublishedShowDefaultIndex = default_shows.findIndex(defaultShow => defaultShow.id === state.lastPublishedShow.id);
-            if (lastPublishedShowDefaultIndex > -1) {
-                state.lastPublishedShow = default_shows[lastPublishedShowDefaultIndex];
+            if (state.lastPublishedShow) {
+                let lastPublishedShowDefaultIndex = default_shows.findIndex(defaultShow => defaultShow.id === state.lastPublishedShow.id);
+                if (lastPublishedShowDefaultIndex > -1) {
+                    state.lastPublishedShow = default_shows[lastPublishedShowDefaultIndex];
+                }
             }
         }
     },

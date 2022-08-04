@@ -35,30 +35,32 @@ const serialMixin = {
                 }
             });
 
-            if (this.selectedSerialPort.length && this.connectedToSerial === false) {
+            if (this.selectedSerialPort) {
+                if (this.selectedSerialPort.length && this.connectedToSerial === false) {
 
-                this.port = new SerialPort(this.selectedSerialPort, {
-                    baudRate: 115200,
-                    parity: 'none',
-                    stopBits: 1,
-                    dataBits: 8,
-                    autoOpen: true
-                });
+                    this.port = new SerialPort(this.selectedSerialPort, {
+                        baudRate: 115200,
+                        parity: 'none',
+                        stopBits: 1,
+                        dataBits: 8,
+                        autoOpen: true
+                    });
 
-                this.port.on('open', () => {
-                    this.connectedToSerial = true;
-                });
+                    this.port.on('open', () => {
+                        this.connectedToSerial = true;
+                    });
 
-                this.port.on('close', () => {
-                    this.connectedToSerial = false;
-                });
+                    this.port.on('close', () => {
+                        this.connectedToSerial = false;
+                    });
 
-                this.port.on('error', () => {
-                    this.connectedToSerial = false;
-                    this.selectedSerialPort = null;
-                });
+                    this.port.on('error', () => {
+                        this.connectedToSerial = false;
+                        this.selectedSerialPort = null;
+                    });
 
-                this.port.open();
+                    this.port.open();
+                }
             }
 
         },

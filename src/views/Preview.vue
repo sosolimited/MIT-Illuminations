@@ -113,7 +113,7 @@
         <v-btn :disabled="show.template || unsavedChanges === false" @click="pushShowToLights(false)" small class="ml-4">Save / Preview</v-btn>
 
         <!-- Publish to Lights -->
-        <v-btn :disabled="(this.editingNowId === this.$store.state.lastPublishedShow.id) && unsavedChanges === false " @click="pushShowToLights(true)" small class="ml-4" color="primary"> {{ uploadToLightsText }}</v-btn>
+        <v-btn :disabled="(this.editingNowId === this.lastPublishedShowId) && unsavedChanges === false " @click="pushShowToLights(true)" small class="ml-4" color="primary"> {{ uploadToLightsText }}</v-btn>
 
 
       </v-card-title>
@@ -471,7 +471,7 @@ export default {
       return this.$store.state.editingNowId
     },
     playingNowId() {
-      return this.$store.state.playingNow.id
+      return this.$store.state.playingNow ? this.$store.state.playingNowId : null
     },
     readonly() {
       return this.show.template
@@ -500,7 +500,7 @@ export default {
       if(this.$store.state.lastPublishedShow === null){
         return false;
       }
-      return this.editingNowId === this.$store.state.lastPublishedShow.id || this.id === this.$store.state.lastPublishedShow.id;
+      return this.editingNowId === this.lastPublishedShowId || this.id === this.lastPublishedShowId;
     },
     uploadToLightsText() {
       return this.unsavedChanges
@@ -548,6 +548,9 @@ export default {
         return 'To start using this template, click on "Copy to New Show" on the left.';
       }
       return '';
+    },
+    lastPublishedShowId(){
+      return this.$store.state.lastPublishedShow ? this.$store.state.lastPublishedShow.id : null;
     }
   },
   methods: {
