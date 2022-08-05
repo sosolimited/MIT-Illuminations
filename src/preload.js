@@ -32,7 +32,6 @@ const estore = new electronStore({
 
 window.dgram = {};
 window.dgram.send = (buf, port, ip) => {
-    console.log("Sending Data over KiNET to ", ip);
     kinetSocket.send(buf, port, ip, function(error){
         if (error) {
             console.log(error);
@@ -51,9 +50,6 @@ window.fse.copyAsset = (src, id) => {
         if (err) return console.error(err)
     }).catch(console.log);
 };
-window['fse'].getBlog = (filePath) => {
-    return fse.readFile(filePath)
-}
 
 
 
