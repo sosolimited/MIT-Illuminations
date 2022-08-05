@@ -158,6 +158,9 @@ export default {
           ctx.fillRect(0, 0, previewCanvas.width, previewCanvas.height);
           ctx.drawImage(document.getElementById('defaultCanvas0'), 0, 0, 1200, 100, 0, 0, 1920, 160);
 
+          // All done
+          return true;
+
         }
 
         // Sample Data
