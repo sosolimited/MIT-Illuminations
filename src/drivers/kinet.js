@@ -19,17 +19,12 @@ const kinetMixin = {
          */
         outputOverKinet: function (data) {
 
-            this.kinetStrands.forEach((strand, index) => {
+            let strandOffset = 0;
+            this.kinetStrands.forEach((strand) => {
                 let strandStart = 0;
-                if (index > 0) {
-                    let allStrands = [...this.kinetStrands];
-                    let priorStrands = allStrands.splice(0, index);
-                    strandStart = priorStrands.reduce((accumulator, previousStrand) => {
-                        accumulator += previousStrand.numLights;
-                        return accumulator;
-                    });
-                }
-                let strandData = data.slice((strandStart * 3), ((strandStart * 3) + (strand.numLights * 3)));
+                strandStart += strandOffset;
+                strandOffset += parseInt(strand.numLights);
+                let strandData = data.slice((strandStart * 3), ((strandStart * 3) + (parseInt(strand.numLights) * 3)));
                 window.dgram.send(Buffer.from([
                     0x04,
                     0x01,
@@ -47,7 +42,7 @@ const kinetMixin = {
                     0xff,
                     0xff,
                     0xff,
-                    strand.port,
+                    parseInt(strand.port),
                     0x00,
                     0x01,
                     0x00,
