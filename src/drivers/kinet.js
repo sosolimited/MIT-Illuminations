@@ -50,7 +50,7 @@ const kinetMixin = {
                     strandData.length >> 8,
                     0x00,
                     0x00
-                ].concat(data)), 6038, strand.ip);
+                ].concat(strandData)), 6038, strand.ip);
             });
 
         }
