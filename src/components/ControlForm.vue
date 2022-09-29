@@ -146,7 +146,7 @@ export default {
       if (this.controlObj.type.toLowerCase() === 'color') {
         return '#EC3131'
       } else if (this.controlObj.type.toLowerCase() === 'image') {
-        return 'gray'
+        return 'gray.png'
       } else {
         return Math.round((this.controlObj.min + this.controlObj.max) / 30) || 0
       }

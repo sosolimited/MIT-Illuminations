@@ -2,7 +2,6 @@ const dgram = require('dgram')
 const electronStore = require('electron-store')
 const fse = require('fs-extra')
 const path = require('path')
-const qs = require('querystring');
 
 const kinetSocket = dgram.createSocket('udp4') // IPv4
 
@@ -17,10 +16,7 @@ const kinetSocket = dgram.createSocket('udp4') // IPv4
 // Win: %APPDATA%/.local/share/mit-illuminations/config.json
 // See https://issuehunt.io/r/sindresorhus/electron-store/issues/181.
 
-// wes note: this is now being passed as a query string to the URL of this
-// page (when loaded from the electron background process) -- this gets around
-// the need to use IPC to look it up
-const userDataPath = qs.decode(location.search.slice(1)).userDataPath;
+const userDataPath = window.process.argv.slice(-1)[0];
 
 /**
  * Create the Electron Store
@@ -32,7 +28,7 @@ const estore = new electronStore({
 
 window.dgram = {};
 window.dgram.send = (buf, port, ip) => {
-    kinetSocket.send(buf, port, ip, function(error){
+    kinetSocket.send(buf, port, ip, function (error) {
         if (error) {
             console.log(error);
         }
@@ -42,13 +38,19 @@ window.dgram.send = (buf, port, ip) => {
 window.estore = estore;
 
 window.fse = {};
-window.fse.copyAsset = (src, id) => {
-    const ext = path.extname(src)
+window.fse.copyAsset = async (src, id) => {
+    const ext = path.extname(src);
+    console.log(userDataPath, id, ext, src);
     const dest = path.join(userDataPath, 'user_uploads', `${id}${ext}`);
-
-    fse.copy(src, dest, (err) => {
-        if (err) return console.error(err)
-    }).catch(console.log);
+    try {
+        await fse.copy(src, dest, (err) => {
+            if (err) return console.error(err)
+        });
+        return true;
+    } catch (error) {
+        console.error(error);
+        return false;
+    }
 };
 
 

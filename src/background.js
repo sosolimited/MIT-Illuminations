@@ -48,17 +48,20 @@ function createWindow() {
             nodeIntegration: true,
             contextIsolation: false,
             webSecurity: false,
-            preload: path.join(__dirname, 'preload.js')
+            preload: path.join(__dirname, 'preload.js'),
+            devTools: true,
+            additionalArguments: [userDataPath]
         }
     });
 
     if (process.env.WEBPACK_DEV_SERVER_URL) {
         splash.loadURL(`file://${__dirname}/bundled/splash.html`).catch(console.log);
-        win.loadURL(`${process.env.WEBPACK_DEV_SERVER_URL}?userDataPath=${encodeURIComponent(userDataPath)}`).catch(console.log);
+        win.loadURL(`${process.env.WEBPACK_DEV_SERVER_URL}`).catch(console.log);
+        win.webContents.openDevTools();
     } else {
         createProtocol('app');
         splash.loadURL(`app://./splash.html`).catch(console.log);
-        win.loadURL(`app://./index.html?userDataPath=${encodeURIComponent(userDataPath)}`).catch(error => {
+        win.loadURL(`app://./index.html`).catch(error => {
             throw new Error(error.message);
         });
     }

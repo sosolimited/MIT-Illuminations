@@ -49,11 +49,12 @@
     </v-img>
     <v-file-input
         v-if="controlObj.type.toLowerCase() === 'image'"
-        :clearable="false"
+        :clearable="true"
         accept=".png"
         class="mx-3"
         dense
         prepend-icon="mdi-file-upload"
+        showsize
         @change="copyAsset"
     ></v-file-input>
 
@@ -117,15 +118,17 @@ export default {
       console.log(`[control] delete unused control ${this.controlObj.id}`)
     },
     copyAsset(src) {
-      const newId = nanoid(10)
-      const fse = window.fse
-      fse.copyAsset(src.path, newId)
-      // TODO: Make sure this emit happens *after* copyAsset completes.
-      setTimeout(
-          () =>
-              this.$emit('updateControlValue', `${newId}.png`, this.controlObj.id),
-          2000
-      );
+      console.log("Copy asset called.");
+      const newId = nanoid(10);
+      window.fse.copyAsset(src.path, newId).then((status) => {
+        if (status) {
+          setTimeout(() => {
+            this.$emit('updateControlValue', `${newId}.png`, this.controlObj.id);
+          }, 1000);
+        } else {
+          alert("This image was unable to be imported, please try again.");
+        }
+      });
     }
   }
 }
