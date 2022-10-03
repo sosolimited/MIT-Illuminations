@@ -221,19 +221,17 @@ export default {
 
         // Light Rays
         let colorIndex = 0;
-        for (
-            let x = illuminations__halfStep;
-            x < (p5.width - 100);
-            x += illuminations__step
-        ) {
+        for(let i = 0; i < light_count; i++) {
+
+          const x = (illuminations__halfStep + (i * illuminations__step));
 
           // Hard Light Source
           ctx.beginPath();
           ctx.filter = 'blur(8px)';
-          ctx.moveTo((x + 50 - 1) * 1.6, 20 * 1.6);
-          ctx.lineTo((x + 50 + 1) * 1.6, 20 * 1.6);
-          ctx.lineTo(((x + 50) + (illuminations__step * 2)) * 1.6, (halfHeight + 80) * 1.6);
-          ctx.lineTo(((x + 50) - (illuminations__step * 4)) * 1.6, (halfHeight + 80) * 1.6);
+          ctx.moveTo((x - 1) * 1.6, 20 * 1.6);
+          ctx.lineTo((x + 1) * 1.6, 20 * 1.6);
+          ctx.lineTo(((x) + (illuminations__step * 2)) * 1.6, (halfHeight + 80) * 1.6);
+          ctx.lineTo(((x) - (illuminations__step * 4)) * 1.6, (halfHeight + 80) * 1.6);
           let my_gradient_hard = ctx.createLinearGradient(0, 20, 0, 160);
           my_gradient_hard.addColorStop(0, 'rgba(' + colors[colorIndex][0] + ',' + colors[colorIndex][1] + ',' + colors[colorIndex][2] + ', 0)');
           my_gradient_hard.addColorStop(0.3, 'rgba(' + colors[colorIndex][0] + ',' + colors[colorIndex][1] + ',' + colors[colorIndex][2] + ',' + (colors[colorIndex][3] / 5) + ')');
@@ -248,10 +246,10 @@ export default {
           // Soft Ambient
           ctx.beginPath();
           ctx.filter = 'blur(10px)';
-          ctx.moveTo((x + 50 - 1) * 1.6, 20 * 1.6);
-          ctx.lineTo((x + 50 + 1) * 1.6, 20 * 1.6);
-          ctx.lineTo(((x + 50) + (illuminations__step * 12)) * 1.6, (halfHeight + 140) * 1.6);
-          ctx.lineTo(((x + 50) - (illuminations__step * 12)) * 1.6, (halfHeight + 140) * 1.6);
+          ctx.moveTo((x - 1) * 1.6, 20 * 1.6);
+          ctx.lineTo((x + 1) * 1.6, 20 * 1.6);
+          ctx.lineTo(((x) + (illuminations__step * 12)) * 1.6, (halfHeight + 140) * 1.6);
+          ctx.lineTo(((x) - (illuminations__step * 12)) * 1.6, (halfHeight + 140) * 1.6);
           let my_gradient_soft = ctx.createLinearGradient(0, 50, 0, 160);
           my_gradient_soft.addColorStop(0, 'rgba(' + colors[colorIndex][0] + ',' + colors[colorIndex][1] + ',' + colors[colorIndex][2] + ',' + ((colors[colorIndex][3]) / 5) + ')');
           my_gradient_soft.addColorStop(1, 'rgba(' + colors[colorIndex][0] + ',' + colors[colorIndex][1] + ',' + colors[colorIndex][2] + ', 0)');
@@ -276,15 +274,13 @@ export default {
 
         // Light Sources (Par Cans)
         colorIndex = 0;
-        for (
-            let x = illuminations__halfStep;
-            x < (p5.width - 100);
-            x += illuminations__step
-        ) {
+        for(let i = 0; i < light_count; i++) {
+
+          const x = (illuminations__halfStep + (i * illuminations__step));
 
           ctx.filter = 'blur(0)';
           ctx.beginPath();
-          ctx.ellipse((x + 50) * 1.6, 10, 2, 2, 0, 0, Math.PI * 2, false);
+          ctx.ellipse((x) * 1.6, 10, 2, 2, 0, 0, Math.PI * 2, false);
           ctx.fillStyle = 'rgba(' + colors[colorIndex][0] + ',' + colors[colorIndex][1] + ',' + colors[colorIndex][2] + ', 1)';
           ctx.globalCompositeOperation = 'hard-light';
           ctx.fill();
