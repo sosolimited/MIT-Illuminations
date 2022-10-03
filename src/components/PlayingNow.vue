@@ -165,16 +165,12 @@ export default {
 
         // Sample Data
         const light_count = vm.numLights;
-        const illuminations__step = (p5.width - 100) / light_count
+        const illuminations__step = p5.width / light_count
         const illuminations__halfStep = illuminations__step / 2
-        const halfHeight = p5.height / 2
+        const halfHeight = Math.floor(p5.height / 2);
         const colors = []
-        for (
-            let x = illuminations__halfStep;
-            x < (p5.width - 100);
-            x += illuminations__step
-        ) {
-          colors.push(p5.get(x, halfHeight))
+        for (let i = 0; i < light_count; i++) {
+          colors.push(p5.get(illuminations__halfStep + (i * illuminations__step), halfHeight));
         }
 
         /////////////////////
@@ -195,19 +191,12 @@ export default {
 
           // Sampled Lights
           let colorIndex = 0;
-          for (
-              let x = illuminations__halfStep;
-              x < (p5.width - 100);
-              x += illuminations__step
-          ) {
-
+          for(let i = 0; i < light_count; i++) {
             ctx.beginPath();
-            ctx.ellipse((x + 50) * 1.6, 80, 4, 4, 0, 0, Math.PI * 2, false);
+            ctx.ellipse((illuminations__halfStep + (i * illuminations__step)) * 1.6, 80, 4, 4, 0, 0, Math.PI * 2, false);
             ctx.fillStyle = 'rgba(' + colors[colorIndex][0] + ',' + colors[colorIndex][1] + ',' + colors[colorIndex][2] + ', 1)';
             ctx.globalCompositeOperation = 'normal';
             ctx.fill();
-
-            // Continue Loop
             colorIndex += 1
           }
 
