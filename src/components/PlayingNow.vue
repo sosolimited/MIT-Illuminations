@@ -356,7 +356,7 @@ export default {
 
       // Load P5 in on-demand global mode
       window.illuminationsP5 = new window.p5();
-
+      window.illuminationsP5.pixelDensity(1);
     },
 
   },
