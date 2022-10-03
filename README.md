@@ -85,6 +85,8 @@ Fork/clone this repo to a folder on your local machine. From within that folder,
 
 ```
 // MacOS
+// Note that you may need to update serialport on some Mac setups.
+// To do so, run `npm install serialport@10` before the general install below.
 npm install && electron-rebuild
 
 // Windows (sometimes needs a little push)
