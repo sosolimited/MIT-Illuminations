@@ -6,7 +6,6 @@ import {copyAssets} from './assets'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const path = require('path');
-const shell = require('electron').shell;
 const userDataPath = app.getPath('userData');
 
 const unhandled = require('electron-unhandled');
