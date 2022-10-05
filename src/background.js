@@ -58,7 +58,7 @@ function createWindow() {
     });
 
     if (process.env.WEBPACK_DEV_SERVER_URL) {
-        splash.loadURL(`file://${__dirname}/bundled/splash.html`).catch(console.log);
+        splash.loadURL(`file://${__dirname}/../public/splash.html`).catch(console.log);
         win.loadURL(`${process.env.WEBPACK_DEV_SERVER_URL}`).catch(console.log);
         win.webContents.openDevTools();
     } else {
