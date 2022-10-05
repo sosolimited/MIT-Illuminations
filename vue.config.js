@@ -7,6 +7,9 @@ module.exports = {
         productName: "Illuminations by MIT",
         extraResources: ["./extraResources/**"],
         afterSign: "tools/notarize.js",
+        win: {
+          target: ['zip']
+        },
         mac: {
           hardenedRuntime: true,
           gatekeeperAssess: false,
