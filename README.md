@@ -77,34 +77,30 @@ If everything worked, at this point your Neopixels should be lighting up and mat
 
 ### Install NodeJS and NPM
 
-Install the correct version of [node.js](https://nodejs.org/en/download/) and [npm](https://www.npmjs.com/) from the [official website](https://nodejs.org/en/download/) (npm will be installed automatically with node.js).
+Install [node.js](https://nodejs.org/en/download/) (tested with Node 14.x and 16.x). npm needs to be at least version 8.x. Update your `npm` dep after Node installation: `npm install -g npm@latest`.
 
 ### To begin, run the installation script
 
 Fork/clone this repo to a folder on your local machine. From within that folder, run:
 
 ```
-// MacOS
-// Note that you may need to update serialport on some Mac setups.
-// To do so, run `npm install serialport@10` before the general install below.
-npm install && electron-rebuild
+npm install
+```
 
-// Windows (sometimes needs a little push)
-npm install && cd node_modules/.bin && electron-rebuild.cmd --module-dir ../../
+Then to start the dev app: 
+```
+npm start
 ```
 
 You're all set. Go ahead and make any changes to the codebase that you need. Enjoy programming :)
 
-### To compile and hot-reload on the fly (while developing)...
-```
-npm run start
-```
+### To Build Production Releases
 
-### To build for mac or windows, respectively...
+**Windows**
 ```
-# Mac
-npm run make-mac-release
-
-# Windows
 npm run make-windows-release
 ```
+
+**Mac**
+1. Follow [this guide](build/README.md) to prepare your dev environment for code signing and notarization.
+2. `npm run make-mac-release`
