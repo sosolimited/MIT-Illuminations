@@ -2,11 +2,10 @@
 
 import {app, BrowserWindow, Menu, protocol} from 'electron'
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
-import {copyAssets} from './assets'
+import {copyAssets, getAssetPath} from './assets'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const path = require('path');
-const shell = require('electron').shell;
 const userDataPath = app.getPath('userData');
 
 const unhandled = require('electron-unhandled');
@@ -24,6 +23,10 @@ protocol.registerSchemesAsPrivileged([
     {
         scheme: 'app',
         privileges: {secure: true, standard: true, supportFetchAPI: true}
+    },
+    {
+        scheme: 'asset',
+        privileges: { supportFetchAPI: true }
     }
 ]);
 
@@ -42,7 +45,7 @@ function createWindow() {
         fullscreen: false,
         minimizable: true,
         resizeable: true,
-        title: 'Illuminations by MIT - Turn P5 Code into Light Shows',
+        title: 'Illuminations by MIT',
         icon: path.join(__dirname, 'build/icon.png'),
         webPreferences: {
             nodeIntegration: true,
@@ -55,7 +58,7 @@ function createWindow() {
     });
 
     if (process.env.WEBPACK_DEV_SERVER_URL) {
-        splash.loadURL(`file://${__dirname}/bundled/splash.html`).catch(console.log);
+        splash.loadURL(`file://${__dirname}/../public/splash.html`).catch(console.log);
         win.loadURL(`${process.env.WEBPACK_DEV_SERVER_URL}`).catch(console.log);
         win.webContents.openDevTools();
     } else {
@@ -91,15 +94,16 @@ app.on('activate', () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
-    protocol.registerFileProtocol('file', (request, callback) => {
-        const pathname = decodeURI(request.url.replace('file://', ''))
+    protocol.registerFileProtocol('asset', (request, callback) => {
+        const pathname = decodeURI(request.url.replace('asset://', ''))
         try {
-            return callback(pathname)
+            const fullpath = getAssetPath(pathname);
+            callback(fullpath);
         } catch (err) {
-            console.error(err)
-            return callback(404)
+            console.error(err);
+            callback(404);
         }
-    })
+    });
 
     createWindow();
 })

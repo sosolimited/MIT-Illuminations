@@ -101,11 +101,8 @@ export default {
     id() {
       return this.$route.params.id
     },
-    userUploadsPath() {
-      return this.$store.state.userUploadsPath
-    },
     assetSrc() {
-      return this.$store.getters.assetUrl(this.controlObj.value)
+      return `asset://${this.controlObj.value}`;
     }
   },
   methods: {

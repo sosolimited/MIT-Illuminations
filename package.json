@@ -8,8 +8,8 @@
     "start": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
     "build": "vue-cli-service electron:build -w",
-    "make-mac-release": "vue-cli-service electron:build -m",
-    "make-windows-release": "vue-cli-service electron:build -w && node tools/make-zip-release.js windows"
+    "make-mac-release": "vue-cli-service electron:build -m --x64 --arm64",
+    "make-windows-release": "vue-cli-service electron:build -w"
   },
   "main": "background.js",
   "dependencies": {
@@ -21,7 +21,7 @@
     "fs-extra": "^10.0.0",
     "nanoid": "^3.1.23",
     "p5": "^1.4.0",
-    "serialport": "^9.2.8",
+    "serialport": "^10.4.0",
     "vue": "^2.6.11",
     "vue-codemirror": "^4.0.6",
     "vue-loader": "^15.9.8",
@@ -37,7 +37,7 @@
     "babel-eslint": "^10.1.0",
     "electron": "^13.5.1",
     "electron-devtools-installer": "^3.1.0",
-    "electron-rebuild": "^3.2.5",
+    "electron-notarize": "^1.2.1",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "vue-cli-plugin-electron-builder": "~2.1.1",
@@ -46,6 +46,11 @@
     "webpack-cli": "^4.9.1",
     "webpack-dev-server": "^4.6.0",
     "zip-a-folder": "^1.1.0"
+  },
+  "overrides": {
+    "vue-cli-plugin-electron-builder": {
+      "electron-builder": "^23.0.3"
+    }
   },
   "eslintConfig": {
     "root": true,

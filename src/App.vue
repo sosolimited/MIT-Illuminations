@@ -62,9 +62,6 @@ export default {
     lightsOn() {
       return this.$store.state.lightsOn
     },
-    coverImagePath() {
-      return `${this.$store.state.userUploadsPath}/user_uploads/${this.playingNow.info.thumbnail}`
-    },
     previewMode: {
       get() {
         return this.$store.state.previewMode

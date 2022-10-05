@@ -202,7 +202,7 @@
 let shell = require('electron').shell
 
 // eslint-disable-next-line no-unused-vars
-const SerialPort = require('serialport');
+const {SerialPort} = require('serialport');
 
 export default {
   name: 'SettingsPanel',

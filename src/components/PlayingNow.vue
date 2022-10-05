@@ -75,10 +75,6 @@ export default {
       window.helpers.lights.count = this.numLights;
       window.controls = this.controls;
 
-      function imageSrc(filename) {
-        return `file:///${window.vueApplication.$store.state.userUploadsPath}/user_uploads/${filename}`;
-      }
-
       /**
        * Provides a method within P5 by which users can load images from controls into their code.
        * @param filename
@@ -86,7 +82,7 @@ export default {
        * @returns {*}
        */
       window.loadControlImage = function (filename, callback) {
-        return window.loadImage(imageSrc(filename), callback);
+        return window.loadImage(`asset://${filename}`, callback);
       }
 
       /**

@@ -4,7 +4,6 @@
 
 import Vue from 'vue';
 import Vuex from 'vuex';
-import qs from 'querystring';
 
 import default_shows from '../starterPack/shows.js';
 
@@ -19,7 +18,6 @@ let electronStore = window.estore || false;
 const store = new Vuex.Store({
     strict: process.env.NODE_ENV !== 'production',
     state: (electronStore ? electronStore.get('state') : false) || {
-        userUploadsPath: qs.decode(location.search.slice(1)).userDataPath,
         lightsOn: true,
         draftCodeRunning: true,
         devOptions: {
@@ -230,9 +228,6 @@ const store = new Vuex.Store({
         },
         kinet(state) {
             return state.kinet;
-        },
-        assetUrl: (state) => (filename) => {
-            return `file:///${state.userUploadsPath}/user_uploads/${filename}`;
         }
     }
 })

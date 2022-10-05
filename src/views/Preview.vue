@@ -483,7 +483,7 @@ export default {
       return this.$store.getters.showById(this.id).info.thumbnail
     },
     thumbnailSrc() {
-      return this.$store.getters.assetUrl(this.thumbnail)
+      return `asset://${this.thumbnail}`;
     },
     isPublishedShow() {
       if(this.$store.state.lastPublishedShow === null){
@@ -524,9 +524,6 @@ export default {
         )
       }
       return result
-    },
-    userUploadsPath() {
-      return this.$store.state.userUploadsPath
     },
     /**
      * Display a message telling the user to duplicate the show, if it's a template.
