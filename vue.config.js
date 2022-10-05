@@ -11,7 +11,8 @@ module.exports = {
           hardenedRuntime: true,
           gatekeeperAssess: false,
           entitlements: "build/entitlements.mac.plist",
-          entitlementsInherit: "build/entitlements.mac.plist"
+          entitlementsInherit: "build/entitlements.mac.plist",
+          target: ['dmg']
         },
         dmg: {
           sign: false, // signing DMGs without notarizing can cause errors
