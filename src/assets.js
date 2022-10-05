@@ -29,22 +29,19 @@ function copyAssets() {
         const srcPath = path.join(__dirname, '..', 'extraResources', item)
         const destPath = path.join(destDir, item);
 
-        fse.pathExists(destPath, (err, exists) => {
-            // Error in evaluation
-            if (err) {
-                console.log(err)
+        const exists = fse.pathExistsSync(destPath);
+
+        // Evaluation result t/f
+        if (!exists) {
+            // Assets Copying
+            try {
+                fse.copySync(srcPath, destPath);
             }
-            // Evaluation result t/f
-            if (exists) {
-                // File Exists
-            } else {
-                // Assets Copying
-                fse.copy(srcPath, destPath, (error) => {
-                    if (error) return console.error(error)
-                }).catch(console.log);
+            catch(err){
+                console.error('failed to copy asset to', destPath);
             }
-        })
-    })
+        }
+    });
 }
 
 module.exports = {
