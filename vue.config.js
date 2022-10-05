@@ -11,11 +11,11 @@ module.exports = {
           hardenedRuntime: true,
           gatekeeperAssess: false,
           entitlements: "build/entitlements.mac.plist",
-          entitlementsInherit: "build/entitlements.mac.plist",
-          writeUpdateInfo: false // disable blockmap generation to save time
+          entitlementsInherit: "build/entitlements.mac.plist"
         },
         dmg: {
-          sign: false
+          sign: false, // signing DMGs without notarizing can cause errors
+          writeUpdateInfo: false // disable blockmap generation to save time
         }
       },
       nodeIntegration: true,
