@@ -3,13 +3,12 @@ const path = require('path');
 const {app} = require('electron');
 const default_shows = require('./starterPack/shows.js');
 
-function copyAssets() {
-    // generate path to user assets folder, based on user data path
-    // (platform independent)
-    const destDir = path.join(app.getPath('userData'), 'user_uploads');
+// generate path to user assets folder, based on user data path
+// (platform independent)
+const destDir = path.join(app.getPath('userData'), 'user_uploads');
 
-    const assets = [
-        'blank.png', 'gray.png'];
+function copyAssets() {
+    const assets = ['blank.png', 'gray.png'];
 
     // auto generate assets list based on starter pack assets
     default_shows.forEach(show => {
@@ -27,7 +26,7 @@ function copyAssets() {
 
     assets.forEach(function (item) {
         const srcPath = path.join(__dirname, '..', 'extraResources', item)
-        const destPath = path.join(destDir, item);
+        const destPath = getAssetPath(item);
 
         const exists = fse.pathExistsSync(destPath);
 
@@ -44,6 +43,11 @@ function copyAssets() {
     });
 }
 
+function getAssetPath(filename){
+    return path.join(destDir, filename);
+}
+
 module.exports = {
-    copyAssets: copyAssets
+    copyAssets: copyAssets,
+    getAssetPath: getAssetPath
 }

@@ -2,7 +2,7 @@
 
 import {app, BrowserWindow, Menu, protocol} from 'electron'
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
-import {copyAssets} from './assets'
+import {copyAssets, getAssetPath} from './assets'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const path = require('path');
@@ -23,6 +23,10 @@ protocol.registerSchemesAsPrivileged([
     {
         scheme: 'app',
         privileges: {secure: true, standard: true, supportFetchAPI: true}
+    },
+    {
+        scheme: 'asset',
+        privileges: { supportFetchAPI: true }
     }
 ]);
 
@@ -41,7 +45,7 @@ function createWindow() {
         fullscreen: false,
         minimizable: true,
         resizeable: true,
-        title: 'Illuminations by MIT - Turn P5 Code into Light Shows',
+        title: 'Illuminations by MIT',
         icon: path.join(__dirname, 'build/icon.png'),
         webPreferences: {
             nodeIntegration: true,
@@ -90,15 +94,16 @@ app.on('activate', () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
-    protocol.registerFileProtocol('file', (request, callback) => {
-        const pathname = decodeURI(request.url.replace('file://', ''))
+    protocol.registerFileProtocol('asset', (request, callback) => {
+        const pathname = decodeURI(request.url.replace('asset://', ''))
         try {
-            return callback(pathname)
+            const fullpath = getAssetPath(pathname);
+            callback(fullpath);
         } catch (err) {
-            console.error(err)
-            return callback(404)
+            console.error(err);
+            callback(404);
         }
-    })
+    });
 
     createWindow();
 })

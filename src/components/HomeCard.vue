@@ -2,7 +2,7 @@
   <v-card v-if="!show.deleted" class="preview-card" style="width:100%">
     <!-- Thumbnail -->
     <v-img
-        :src="thumbnailSrc"
+        :src="`asset://${thumbnail}`"
         class="card-image"
         @click="routeToEditor"
     ></v-img>
@@ -58,14 +58,8 @@ export default {
     thumbnail() {
       return this.show.info.thumbnail
     },
-    thumbnailSrc() {
-      return this.$store.getters.assetUrl(this.thumbnail)
-    },
     lightsOn() {
       return this.$store.state.lightsOn
-    },
-    userUploadsPath() {
-      return this.$store.state.userUploadsPath
     }
   },
   methods: {
