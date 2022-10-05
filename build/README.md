@@ -6,8 +6,7 @@ others will have issues. Other may see errors like "unidentified developer" or "
 Signing and notarizing requires a paid Apple Developer account.
 
 The MIT Illuminations repo is setup to automatically sign and notarize builds
-after you do some one-time environment setup as outlined below. The rough process 
-the build script goes through is:
+after you do some one-time environment setup as outlined below.
 
 ## 1. Get a Developer ID Certificate from Apple
 
