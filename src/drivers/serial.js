@@ -2,7 +2,7 @@
 /* Arduino / Serial Mixin */
 /* ////////////////////// */
 
-const SerialPort = require("serialport");
+const {SerialPort} = require("serialport");
 
 const serialMixin = {
     data() {

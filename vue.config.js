@@ -2,10 +2,10 @@ module.exports = {
   pluginOptions: {
     electronBuilder: {
       preload: "./src/preload.js",
+      appId: 'com.sosolimited.mit-illuminations',
       builderOptions: {
-        productName: "Illuminations by MIT - Turn P5 Code into Light Shows",
+        productName: "Illuminations by MIT",
         extraResources: ["./extraResources/**"],
-        npmRebuild: false
       },
       nodeIntegration: true,
       externals: ['serialport']
