@@ -8,7 +8,7 @@
     "start": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
     "build": "vue-cli-service electron:build -w",
-    "make-mac-release": "vue-cli-service electron:build -m",
+    "make-mac-release": "vue-cli-service electron:build -m --x64",
     "make-windows-release": "vue-cli-service electron:build -w && node tools/make-zip-release.js windows"
   },
   "main": "background.js",
@@ -37,6 +37,7 @@
     "babel-eslint": "^10.1.0",
     "electron": "^13.5.1",
     "electron-devtools-installer": "^3.1.0",
+    "electron-notarize": "^1.2.1",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "vue-cli-plugin-electron-builder": "~2.1.1",
