@@ -2,7 +2,7 @@
 
 Recent versions of macOS prevent the opening of downloaded apps that are not signed and 
 notarized. Although an unsigned build may appear to work on your local machine, 
-others will have issues. Other may see errors like "unidentified developer" or "damaged" application.
+others will have issues. Others may see errors like "unidentified developer" or "damaged" application.
 Signing and notarizing requires a paid Apple Developer account.
 
 The MIT Illuminations repo is setup to automatically sign and notarize builds
@@ -39,7 +39,7 @@ APPLEIDPASS = "app-specific-password"
 APPLETEAMID = "short-team-identifier"
 ```
 
-Note: you can find the short Team ID on your Apple Developer account dashboard.
+Note: you can find the short Team ID on your [Apple Developer account dashboard](https://developer.apple.com/account/) under "Membership Details".
 
 ## 4. Build the application
 
