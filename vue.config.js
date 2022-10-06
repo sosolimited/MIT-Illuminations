@@ -3,6 +3,9 @@ module.exports = {
     electronBuilder: {
       preload: "./src/preload.js",
       appId: 'com.sosolimited.mit-illuminations',
+      extendInfo: {
+        NSMicrophoneUsageDescription: "Some shows require microphone input.",
+      },
       builderOptions: {
         productName: "Illuminations by MIT",
         extraResources: ["./extraResources/**"],
