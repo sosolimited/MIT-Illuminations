@@ -66,6 +66,7 @@ export default {
 
       // Remove the prior deployment of P5 from the DOM
       if (window.p5 && window.p5.instance) {
+        window.draw = null;
         window.p5.instance.remove();
         window.p5.instance = window.setup = window.draw = window.preload = null;
       }
@@ -223,7 +224,6 @@ export default {
 
           // Hard Light Source
           ctx.beginPath();
-          ctx.filter = 'blur(8px)';
           ctx.moveTo((x - 1) * 1.6, 20 * 1.6);
           ctx.lineTo((x + 1) * 1.6, 20 * 1.6);
           ctx.lineTo(((x) + (illuminations__step * 2)) * 1.6, (halfHeight + 80) * 1.6);
@@ -239,28 +239,11 @@ export default {
           ctx.fill();
           ctx.globalAlpha = 1
 
-          // Soft Ambient
-          ctx.beginPath();
-          ctx.filter = 'blur(10px)';
-          ctx.moveTo((x - 1) * 1.6, 20 * 1.6);
-          ctx.lineTo((x + 1) * 1.6, 20 * 1.6);
-          ctx.lineTo(((x) + (illuminations__step * 12)) * 1.6, (halfHeight + 140) * 1.6);
-          ctx.lineTo(((x) - (illuminations__step * 12)) * 1.6, (halfHeight + 140) * 1.6);
-          let my_gradient_soft = ctx.createLinearGradient(0, 50, 0, 160);
-          my_gradient_soft.addColorStop(0, 'rgba(' + colors[colorIndex][0] + ',' + colors[colorIndex][1] + ',' + colors[colorIndex][2] + ',' + ((colors[colorIndex][3]) / 5) + ')');
-          my_gradient_soft.addColorStop(1, 'rgba(' + colors[colorIndex][0] + ',' + colors[colorIndex][1] + ',' + colors[colorIndex][2] + ', 0)');
-          ctx.fillStyle = my_gradient_soft;
-          ctx.globalCompositeOperation = 'screen';
-          ctx.globalAlpha = 0.2
-          ctx.fill();
-          ctx.globalAlpha = 1
-
           // Continue Loop
           colorIndex += 1
         }
 
         // Ceiling
-        ctx.filter = 'blur(0)';
         ctx.globalCompositeOperation = 'normal';
         let my_gradient_ceiling = ctx.createLinearGradient(0, 0, 0, 22);
         my_gradient_ceiling.addColorStop(0.8, '#777777');
@@ -274,7 +257,6 @@ export default {
 
           const x = (illuminations__halfStep + (i * illuminations__step));
 
-          ctx.filter = 'blur(0)';
           ctx.beginPath();
           ctx.ellipse((x) * 1.6, 10, 2, 2, 0, 0, Math.PI * 2, false);
           ctx.fillStyle = 'rgba(' + colors[colorIndex][0] + ',' + colors[colorIndex][1] + ',' + colors[colorIndex][2] + ', 1)';

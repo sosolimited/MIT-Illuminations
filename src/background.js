@@ -15,8 +15,25 @@ unhandled();
 // copy them now in the background.
 copyAssets();
 
+// Fix for socket connection
+app.commandLine.appendSwitch('disable-renderer-backgrounding');
+app.commandLine.appendSwitch('--disable-renderer-backgrounding');
+
 // Fix for serialport usage
 app.allowRendererProcessReuse = false;
+
+// No activity on GPU when enabled... but complex scenes are 1-3FPS
+//app.commandLine.appendSwitch('disable-gpu-compositing');
+
+// Same as above
+//app.commandLine.appendSwitch('disable-gpu');
+
+// Same as above
+// app.disableHardwareAcceleration();
+
+// Doesn't seem to do anything, but might fix a weird driver issue?
+//app.commandLine.appendSwitch('disable-gpu-sandbox');
+//app.commandLine.appendSwitch('--no-sandbox');
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([

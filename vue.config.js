@@ -10,9 +10,9 @@ module.exports = {
         productName: "Illuminations by MIT",
         extraResources: ["./extraResources/**"],
         afterSign: "tools/notarize.js",
-        win: {
+        /*win: {
           target: ['zip']
-        },
+        },*/
         mac: {
           hardenedRuntime: true,
           gatekeeperAssess: false,
