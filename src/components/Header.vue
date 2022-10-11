@@ -1,16 +1,19 @@
 <template>
   <v-app-bar id="header" color="white" elevation="1" height="60">
     <div style="display: flex; align-items: center; cursor: pointer;" v-on:click="returnToHome()">
-      <img alt="MIT Logo (SVG)" class="header__logo" src="https://upload.wikimedia.org/wikipedia/commons/0/0c/MIT_logo.svg">
-      <div id="header-title">Illuminations — Turn P5 Code into Light Shows</div>
+      <img alt="MIT Logo (SVG)" class="header__logo" src="https://illuminations.mit.edu/assets/images/logo.svg">
     </div>
     <v-spacer></v-spacer>
-    <v-btn text @click="toggleLightsStatus">
+    <v-btn text @click="toggleLightsStatus" style="font-size: 12px !important; font-weight: bold !important;">
       <v-icon v-if="status">mdi-electric-switch-closed</v-icon>
       <v-icon v-else>mdi-electric-switch</v-icon>
       <span id="lights-text">Lights {{ status ? 'On' : 'Off' }}</span>
     </v-btn>
-    <SettingsPanel></SettingsPanel>
+    <SettingsPanel />
+    <v-btn text @click="exitApplication" style="font-size: 12px !important; font-weight: bold !important;">
+      <v-icon>mdi-cancel</v-icon>
+      <span id="exit-text">Exit</span>
+    </v-btn>
   </v-app-bar>
 </template>
 
@@ -42,6 +45,9 @@ export default {
     },
     returnToHome() {
       this.$router.push({name: 'home'});
+    },
+    exitApplication() {
+      window.close();
     }
   }
 }
@@ -50,26 +56,23 @@ export default {
 <style scoped>
 #header {
   padding: 0 60px;
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
 }
 
-#header-title {
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  font-size: 1.3rem;
-  font-weight: 500;
-  letter-spacing: 0.0125em;
-  line-height: 2rem;
-  word-break: break-all;
-  cursor: pointer;
+#header * {
+  -webkit-app-region: no-drag;
 }
 
 #lights-text {
   margin-left: 10px;
 }
 
+#exit-text {
+  margin-left: 10px;
+}
+
 .header__logo {
-  width: 40px;
-  margin-right: 15px;
+  width: 140px;
 }
 </style>

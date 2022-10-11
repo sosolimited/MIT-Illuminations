@@ -14,7 +14,7 @@
       TEMPLATE
     </div>
     <!-- Title -->
-    <v-card-title class="d-block text-truncate card-title">{{
+    <v-card-title class="d-block text-truncate card-title" style="font-size: 16px !important; font-weight: 500 !important;">{{
         title
       }}
     </v-card-title>

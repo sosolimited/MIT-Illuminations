@@ -62,6 +62,7 @@ function createWindow() {
         fullscreen: false,
         minimizable: true,
         resizeable: true,
+        frame: false,
         title: 'Illuminations by MIT',
         icon: path.join(__dirname, 'build/icon.png'),
         webPreferences: {

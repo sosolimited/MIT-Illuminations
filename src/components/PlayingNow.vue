@@ -318,7 +318,9 @@ export default {
         window.draw = function () {
           // eslint-disable-next-line no-undef
           background(0);
-          window.illuminationsSampling();
+          const previewSamples = window.illuminationsSampling();
+          window.illuminationsPreview(previewSamples);
+
         }
       }
 

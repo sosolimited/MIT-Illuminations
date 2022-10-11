@@ -78,11 +78,13 @@ export default {
 </script>
 
 <style>
+
 #app {
   padding: 0;
   background-color: #F8F8F8;
   max-width: 100vw;
   overflow-x: hidden;
+  font-family: "Inter", sans-serif;
 }
 
 #content {
@@ -92,6 +94,11 @@ export default {
   max-width: 1920px;
   padding: 0 40px;
   min-width: 1000px;
+}
+
+#previewDisplay{
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
 }
 
 @media only screen and (max-width: 1400px) {

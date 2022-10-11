@@ -2,7 +2,6 @@
   <v-dialog
       v-model="settingsDialog"
       scrollable
-      transition="dialog-bottom-transition"
       width="800"
   >
     <template v-slot:activator="{ on, attrs }">
@@ -10,6 +9,7 @@
           text
           v-bind="attrs"
           v-on="on"
+          style="font-size: 12px !important; font-weight: bold !important;"
       >
         <v-icon color="black">mdi-cog</v-icon>
         <span style="margin-left: 10px">Settings</span>
@@ -337,3 +337,9 @@ export default {
   }
 }
 </script>
+
+<style>
+  *{
+    -webkit-app-region: no-drag;
+  }
+</style>
