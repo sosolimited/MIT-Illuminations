@@ -38,7 +38,8 @@ export default {
     return {
       helpers: helpers,
       snackbar: false,
-      errorMessage: ''
+      errorMessage: '',
+      protectedVariables: []
     }
   },
   mixins: [
@@ -66,6 +67,8 @@ export default {
     }
   },
   mounted() {
+    // Prepare the protected variables
+    this.protectedVariables = Object.keys( window );
     // Deploy the P5
     this.$nextTick(() => {
       this.deployToP5();
@@ -312,7 +315,7 @@ export default {
       try {
         const userCodeSyntax = parse(outputCode, {ecmaVersion: 2020});
 
-        //console.log(userCodeSyntax);
+        console.log(userCodeSyntax);
 
         // Whoops, the user tried to throw an error
         if(userCodeSyntax["body"].filter(item => {
@@ -331,6 +334,31 @@ export default {
           this.snackbar = true;
           return;
         }
+
+        // Make sure our top level functions are just draw and setup
+        if(userCodeSyntax["body"].filter(item => {
+          return item.id.name !== 'setup' && item.id.name !== 'draw';
+        }).length > 0) {
+          this.errorMessage = "Please remove any top level functions from your code - all declarations should exist within setup() or draw().";
+          this.snackbar = true;
+          return;
+        }
+
+        // Make sure no variable names conflict with our protectedVariables list
+        for(let declaredFunction of userCodeSyntax["body"]){
+          for(const element of declaredFunction["body"]["body"]) {
+            if (element.type === 'VariableDeclaration') {
+              for (let declaration of element["declarations"]) {
+                if (this.protectedVariables.includes(declaration.id.name)) {
+                  this.errorMessage = "Please rename your variable '" + declaration.id.name + "' - it conflicts with a protected variable name.";
+                  this.snackbar = true;
+                  return;
+                }
+              }
+            }
+          }
+        }
+
 
       } catch (e) {
         // Any syntax errors, let's handle them
