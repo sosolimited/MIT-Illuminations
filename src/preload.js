@@ -40,7 +40,6 @@ window.estore = estore;
 window.fse = {};
 window.fse.copyAsset = async (src, id) => {
     const ext = path.extname(src);
-    console.log(userDataPath, id, ext, src);
     const dest = path.join(userDataPath, 'user_uploads', `${id}${ext}`);
     try {
         await fse.copy(src, dest, (err) => {

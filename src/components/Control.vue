@@ -107,15 +107,12 @@ export default {
   },
   methods: {
     updateControlValue(val) {
-      this.$emit('updateControlValue', val, this.controlObj.id)
-      console.log('[control] new control value')
+      this.$emit('updateControlValue', val, this.controlObj.id);
     },
     deleteUnusedControl() {
-      this.$emit('deleteUnusedControl')
-      console.log(`[control] delete unused control ${this.controlObj.id}`)
+      this.$emit('deleteUnusedControl');
     },
     copyAsset(src) {
-      console.log("Copy asset called.");
       const newId = nanoid(10);
       window.fse.copyAsset(src.path, newId).then((status) => {
         if (status) {

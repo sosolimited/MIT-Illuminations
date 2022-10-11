@@ -23,7 +23,7 @@
         </div>
 
         <!-- Show Title -->
-        <v-card-title class="d-inline-block text-truncate card-title">{{ show.info.title }}</v-card-title>
+        <v-card-title class="d-inline-block text-truncate card-title" style="max-width: 100%;">{{ show.info.title }}</v-card-title>
         <!-- Show Description -->
         <v-card-text class="clamp-card-description">{{ show.info.description }}</v-card-text>
 
@@ -662,9 +662,7 @@ export default {
       })
 
       // SIMPLE COLORS HAS A BUG
-      this.unsavedControl = true
-
-      console.log(val, controlId);
+      this.unsavedControl = true;
 
     },
     deleteUnusedControl(controlId) {

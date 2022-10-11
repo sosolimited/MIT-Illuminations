@@ -116,7 +116,6 @@ const store = new Vuex.Store({
             state.homeSort = sort;
         },
         addControl(state, updates) {
-            console.log(updates)
             const show = state.shows.find((show) => show.id === updates.id);
             show.controls[updates.controlObj.id] = updates.controlObj;
         },
@@ -163,7 +162,6 @@ const store = new Vuex.Store({
             state.lastPublishedShow = state.shows.find((show) => show.id === id);
         },
         restorePublishedShow(state) {
-            console.log("Restoring published show");
             if (state.lastPublishedShow !== null) {
                 state.playingNow = state.lastPublishedShow;
                 store.state.playingNowWatcher += 1;
