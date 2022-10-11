@@ -8,9 +8,6 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 const path = require('path');
 const userDataPath = app.getPath('userData');
 
-const unhandled = require('electron-unhandled');
-unhandled();
-
 // If any of the starter assets aren't in the userData path,
 // copy them now in the background.
 copyAssets();
@@ -70,7 +67,7 @@ function createWindow() {
             contextIsolation: false,
             webSecurity: false,
             preload: path.join(__dirname, 'preload.js'),
-            devTools: true,
+            devTools: false,
             additionalArguments: [userDataPath]
         }
     });
@@ -87,7 +84,7 @@ function createWindow() {
         });
     }
 
-    win.once('ready-to-show', () => {
+    win.webContents.once('did-finish-load', () => {
         splash.destroy();
         win.show();
     });
