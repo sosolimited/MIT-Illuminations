@@ -95,16 +95,25 @@ export default {
       }
 
       window.illuminationsSampling = function () {
+
         const p5 = window.illuminationsP5;
         let data = [];
-        let x = 0;
-        const y = Math.floor(p5.height / 2);
-        const xStep = p5.width / vm.numLights;
-        const x0 = xStep / 2;
+        const y = 50;
+        const xStep = Math.floor(1200 / vm.numLights);
+        const x0 = Math.floor(xStep / 2);
+        p5.loadPixels();
+        const samples = [];
         for (let i = 0; i < vm.numLights; i++) {
-          x = x0 + i * xStep;
-          let RGB = p5.get(x, y);
-          RGB.splice(3, 1);
+          let x = x0 + i * xStep;
+          let RGB = [];
+
+          for (let RGBIndex = 0; RGBIndex < 3; RGBIndex++) {
+            const startIndex = 4 * (y * 1200 + x);
+            RGB.push(p5.pixels[startIndex + RGBIndex]);
+          }
+
+          samples.push([...RGB, 1]);
+
           // Convert to RGB+W if needed
           if (vm.selectedColorMode === 'RGB + W') {
             let M = Math.max(RGB[0], RGB[1], RGB[2]);
@@ -131,12 +140,15 @@ export default {
           vm.outputOverKinet(data);
         }
 
+        // Return raw sampling data for preview
+        return samples;
+
       }
 
       /**
        * Draws the illuminationsPreview "mock-up" as part of the P5's draw() loop
        */
-      window.illuminationsPreview = function () {
+      window.illuminationsPreview = function (samples) {
 
         // P5 Definition
         const p5 = window.illuminationsP5;
@@ -144,6 +156,12 @@ export default {
         // Canvas Definition
         const previewCanvas = document.getElementById('previewDisplay');
         const ctx = previewCanvas.getContext('2d');
+
+        // No Data
+        if(samples.length === 0){
+          ctx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+          return;
+        }
 
         ///////////////////
         // Code Mode (2) //
@@ -161,14 +179,9 @@ export default {
         }
 
         // Sample Data
-        const light_count = vm.numLights;
-        const illuminations__step = p5.width / light_count
-        const illuminations__halfStep = illuminations__step / 2
+        const illuminations__step = Math.floor(p5.width / samples.length)
+        const illuminations__halfStep = Math.floor(illuminations__step / 2);
         const halfHeight = Math.floor(p5.height / 2);
-        const colors = []
-        for (let i = 0; i < light_count; i++) {
-          colors.push(p5.get(illuminations__halfStep + (i * illuminations__step), halfHeight));
-        }
 
         /////////////////////
         // Sample Mode (1) //
@@ -187,14 +200,12 @@ export default {
           ctx.globalAlpha = 1;
 
           // Sampled Lights
-          let colorIndex = 0;
-          for(let i = 0; i < light_count; i++) {
+          for (let i = 0; i < samples.length; i++) {
             ctx.beginPath();
-            ctx.ellipse((illuminations__halfStep + (i * illuminations__step)) * 1.6, 80, 4, 4, 0, 0, Math.PI * 2, false);
-            ctx.fillStyle = 'rgba(' + colors[colorIndex][0] + ',' + colors[colorIndex][1] + ',' + colors[colorIndex][2] + ', 1)';
+            ctx.ellipse(Math.floor((illuminations__halfStep + (i * illuminations__step)) * 1.6), 80, 4, 4, 0, 0, Math.PI * 2, false);
+            ctx.fillStyle = 'rgba(' + samples[i][0] + ',' + samples[i][1] + ',' + samples[i][2] + ', 1)';
             ctx.globalCompositeOperation = 'normal';
             ctx.fill();
-            colorIndex += 1
           }
 
           // All done
@@ -217,8 +228,7 @@ export default {
         ctx.fillRect(0, 0, previewCanvas.width, previewCanvas.height);
 
         // Light Rays
-        let colorIndex = 0;
-        for(let i = 0; i < light_count; i++) {
+        for (let i = 0; i < samples.length; i++) {
 
           const x = (illuminations__halfStep + (i * illuminations__step));
 
@@ -229,18 +239,15 @@ export default {
           ctx.lineTo(((x) + (illuminations__step * 2)) * 1.6, (halfHeight + 80) * 1.6);
           ctx.lineTo(((x) - (illuminations__step * 4)) * 1.6, (halfHeight + 80) * 1.6);
           let my_gradient_hard = ctx.createLinearGradient(0, 20, 0, 160);
-          my_gradient_hard.addColorStop(0, 'rgba(' + colors[colorIndex][0] + ',' + colors[colorIndex][1] + ',' + colors[colorIndex][2] + ', 0)');
-          my_gradient_hard.addColorStop(0.3, 'rgba(' + colors[colorIndex][0] + ',' + colors[colorIndex][1] + ',' + colors[colorIndex][2] + ',' + (colors[colorIndex][3] / 5) + ')');
-          my_gradient_hard.addColorStop(0.5, 'rgba(' + colors[colorIndex][0] + ',' + colors[colorIndex][1] + ',' + colors[colorIndex][2] + ',' + (colors[colorIndex][3]) + ')');
-          my_gradient_hard.addColorStop(0.8, 'rgba(' + colors[colorIndex][0] + ',' + colors[colorIndex][1] + ',' + colors[colorIndex][2] + ', 0)');
+          my_gradient_hard.addColorStop(0, 'rgba(' + samples[i][0] + ',' + samples[i][1] + ',' + samples[i][2] + ', 0)');
+          my_gradient_hard.addColorStop(0.3, 'rgba(' + samples[i][0] + ',' + samples[i][1] + ',' + samples[i][2] + ',' + (samples[i][3] / 5) + ')');
+          my_gradient_hard.addColorStop(0.5, 'rgba(' + samples[i][0] + ',' + samples[i][1] + ',' + samples[i][2] + ',' + (samples[i][3]) + ')');
+          my_gradient_hard.addColorStop(0.8, 'rgba(' + samples[i][0] + ',' + samples[i][1] + ',' + samples[i][2] + ', 0)');
           ctx.fillStyle = my_gradient_hard;
           ctx.globalCompositeOperation = 'lighter';
-          ctx.globalAlpha = 0.15
+          ctx.globalAlpha = 0.25;
           ctx.fill();
-          ctx.globalAlpha = 1
-
-          // Continue Loop
-          colorIndex += 1
+          ctx.globalAlpha = 1;
         }
 
         // Ceiling
@@ -252,19 +259,16 @@ export default {
         ctx.fillRect(0, 0, previewCanvas.width, 20);
 
         // Light Sources (Par Cans)
-        colorIndex = 0;
-        for(let i = 0; i < light_count; i++) {
+        for (let i = 0; i < samples.length; i++) {
 
           const x = (illuminations__halfStep + (i * illuminations__step));
 
           ctx.beginPath();
           ctx.ellipse((x) * 1.6, 10, 2, 2, 0, 0, Math.PI * 2, false);
-          ctx.fillStyle = 'rgba(' + colors[colorIndex][0] + ',' + colors[colorIndex][1] + ',' + colors[colorIndex][2] + ', 1)';
+          ctx.fillStyle = 'rgba(' + samples[i][0] + ',' + samples[i][1] + ',' + samples[i][2] + ', 1)';
           ctx.globalCompositeOperation = 'hard-light';
           ctx.fill();
 
-          // Continue Loop
-          colorIndex += 1
         }
 
         // All done
@@ -293,8 +297,10 @@ export default {
       }
 
       // Must remain a constant and not directly referenced so that it can be appended to with illuminationsSampling/illuminationsPreview methods below
-      const userDefinedSetupMethod = window.setup || function () {};
-      const userDefinedDrawMethod = window.draw || function () {};
+      const userDefinedSetupMethod = window.setup || function () {
+      };
+      const userDefinedDrawMethod = window.draw || function () {
+      };
 
       window.setup = function () {
         userDefinedSetupMethod();
@@ -305,15 +311,14 @@ export default {
       if (this.lightsOn) {
         window.draw = function () {
           userDefinedDrawMethod();
-          window.illuminationsSampling();
-          window.illuminationsPreview();
+          const previewSamples = window.illuminationsSampling();
+          window.illuminationsPreview(previewSamples);
         }
       } else {
         window.draw = function () {
           // eslint-disable-next-line no-undef
           background(0);
           window.illuminationsSampling();
-          window.illuminationsPreview();
         }
       }
 
@@ -330,6 +335,11 @@ export default {
       }
     },
     lightsOn: {
+      handler() {
+        this.deployToP5();
+      }
+    },
+    numLights: {
       handler() {
         this.deployToP5();
       }
