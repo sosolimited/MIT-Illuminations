@@ -1,6 +1,21 @@
 <template>
   <section>
-    <!-- No Template Declared in P5 Global Mode -->
+    <v-snackbar
+        v-model="snackbar"
+    >
+      {{ errorMessage }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+            color="red"
+            text
+            v-bind="attrs"
+            @click="snackbar = false"
+        >
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </section>
 </template>
 
@@ -15,11 +30,15 @@ import serialMixin from '../drivers/serial';
 // Import Helpers
 import helpers from '../config/p5helpers.config';
 
+import {parse} from 'acorn';
+
 export default {
   name: 'PlayingNow',
   data() {
     return {
       helpers: helpers,
+      snackbar: false,
+      errorMessage: ''
     }
   },
   mixins: [
@@ -158,7 +177,7 @@ export default {
         const ctx = previewCanvas.getContext('2d');
 
         // No Data
-        if(samples.length === 0){
+        if (samples.length === 0) {
           ctx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
           return;
         }
@@ -289,7 +308,38 @@ export default {
       /* Then, when we parse the user's code, we should try and find variable names that are in that list, and block/stop if that's the case */
       /* Keeping the initial state in store before any user code is evaluated means we can run this multiple times and allow it to override setup/draw/etc. */
 
-      // Evaluate the user defined P5 code into the global namespace (by means of indirect evaluation)
+      // Evaluate the user defined P5 code
+      try {
+        const userCodeSyntax = parse(outputCode, {ecmaVersion: 2020});
+
+        //console.log(userCodeSyntax);
+
+        // Whoops, the user tried to throw an error
+        if(userCodeSyntax["body"].filter(item => {
+          return item.type === 'ThrowStatement';
+        }).length > 0) {
+          this.errorMessage = "Please remove your thrown error/exception - Illuminations doesn't support this yet.";
+          this.snackbar = true;
+          return;
+        }
+
+        // Whoops, the user forgot a setup/draw method
+        if(userCodeSyntax["body"].filter(item => {
+          return item.type === 'FunctionDeclaration' && (item.id.name === 'setup' || item.id.name === 'draw');
+        }).length < 2) {
+          this.errorMessage = "Please add a setup() and draw() method to your code.";
+          this.snackbar = true;
+          return;
+        }
+
+      } catch (e) {
+        // Any syntax errors, let's handle them
+        this.errorMessage = e.message;
+        this.snackbar = true;
+        return;
+      }
+
+      // Run the user defined P5 code
       try {
         window.eval(outputCode);
       } catch (e) {
@@ -310,6 +360,8 @@ export default {
       // Draw the user's code if lights are on, otherwise draw a black screen.
       if (this.lightsOn) {
         window.draw = function () {
+          // eslint-disable-next-line no-undef
+          background(0);
           userDefinedDrawMethod();
           const previewSamples = window.illuminationsSampling();
           window.illuminationsPreview(previewSamples);

@@ -172,7 +172,7 @@
                                 >
                 <v-icon v-else>mdi-chevron-right</v-icon>
               </v-btn>
-              <v-btn
+<!--              <v-btn
                   v-if="isComponentVisible.consoleInfo"
                   :class="[
                                     'mr-2',
@@ -184,7 +184,7 @@
                   outlined
                   @click="setConsoleOutputVisibility"
               >Console
-              </v-btn>
+              </v-btn>-->
               <v-btn
                   v-if="isComponentVisible.consoleInfo"
                   :class="[
@@ -212,7 +212,7 @@
                   />
                 </v-card>
               </v-col>
-              <v-col
+<!--              <v-col
                   cols="4"
                   v-if="
                                     isComponentVisible.consoleInfo && isComponentVisible.consoleOutput
@@ -257,7 +257,7 @@
                     </v-col>
                   </v-row>
                 </v-card>
-              </v-col>
+              </v-col>-->
               <v-col
                   cols="4"
                   v-if="
@@ -385,7 +385,6 @@ import router from '../router'
 import {nanoid} from 'nanoid'
 
 // P5 and Configuration
-import p5Workflow from '../mixins/p5Workflow'
 import helpers from '../config/p5helpers.config'
 
 // Code Editor IDE (CodeMirror)
@@ -402,7 +401,6 @@ import HelpDesk from '../components/HelpDesk'
 
 export default {
   name: 'Preview',
-  mixins: [p5Workflow],
   components: {
     codemirror,
     Control,
@@ -448,7 +446,6 @@ export default {
     this.ready = true;
 
     this.$nextTick(() => {
-      this.rerouteConsole();
       this.pushShowToLights(false);
     })
   },

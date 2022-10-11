@@ -1,7 +1,8 @@
 export default {
     methods: {
         rerouteConsole() {
-            const logs = this.logs;
+            return;
+            /*const logs = this.logs;
             (window.console.log = function (msg) {
                 const previous = logs[logs.length - 1] || {
                     type: '',
@@ -17,11 +18,11 @@ export default {
             }),
                 (window.console.error = function (msg) {
                     logs.push({msg: msg, type: 'err', n: 0});
-                })
+                })*/
         },
         restoreConsole() {
-            window.console.log = this.consoleLogBasic
-            window.console.error = this.consoleErrorBasic
+            //window.console.log = this.consoleLogBasic
+            //window.console.error = this.consoleErrorBasic
         }
     }
 }
