@@ -1,8 +1,9 @@
 'use strict'
 
-import {app, BrowserWindow, Menu, protocol} from 'electron'
+import {app, BrowserWindow, Menu, protocol, dialog} from 'electron'
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
 import {copyAssets, getAssetPath} from './assets'
+import electronStore from "electron-store";
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const path = require('path');
@@ -40,7 +41,7 @@ protocol.registerSchemesAsPrivileged([
     },
     {
         scheme: 'asset',
-        privileges: { supportFetchAPI: true }
+        privileges: {supportFetchAPI: true}
     }
 ]);
 
@@ -59,7 +60,7 @@ function createWindow() {
         fullscreen: false,
         minimizable: true,
         resizeable: true,
-        frame: false,
+        //frame: false,
         title: 'Illuminations by MIT',
         icon: path.join(__dirname, 'build/icon.png'),
         webPreferences: {
@@ -67,7 +68,7 @@ function createWindow() {
             contextIsolation: false,
             webSecurity: false,
             preload: path.join(__dirname, 'preload.js'),
-            devTools: false,
+            devTools: isDevelopment,
             additionalArguments: [userDataPath]
         }
     });
@@ -88,11 +89,27 @@ function createWindow() {
         splash.destroy();
         win.show();
     });
+
+    // Disable the currently playing show on application crash/hang
+    win.webContents.on('unresponsive', async () => {
+        let tempStore = new electronStore({
+            cwd: userDataPath
+        });
+        let tempState = tempStore.get('state');
+        tempState.errorFlag = true;
+        tempState.errorTitle = tempState.playingNow.info.title;
+        tempState.errorID = tempState.playingNow.id;
+        tempStore.set('state', tempState);
+        await dialog.showErrorBox('Illuminations by MIT is unresponsive', 'The Illuminations by MIT application is unresponsive. This may be due to an infinite loop or a small bug in the code of your show, "' + tempState.playingNow.info.title + '". The application will restart, and the problematic show will be temporarily disabled until you can fix the issue.');
+        win.destroy();
+        app.relaunch();
+        app.exit();
+    });
 }
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
-        app.quit();
+    app.quit();
 });
 
 // This method will be called when Electron has finished

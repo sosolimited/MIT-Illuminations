@@ -45,6 +45,11 @@ const store = new Vuex.Store({
         ],
     },
     mutations: {
+        clearError(state){
+          state.errorFlag = false;
+          state.errorTitle = '';
+          state.errorID = '';
+        },
         // Update whether or not to output light sampling to the kiNET driver
         updateEnableKinet(state, boolean) {
             state.enableKinet = boolean;
@@ -83,16 +88,16 @@ const store = new Vuex.Store({
         },
         saveToOriginal(state, updates) {
             const show = state.shows.find(
-                (show) => show.id === state.editingNowId
-            )
+                (show) => show.id === updates.id
+            );
             show.info = JSON.parse(JSON.stringify(updates.info));
             show.controls = JSON.parse(JSON.stringify(updates.controls));
             show.code = updates.code;
             show.lastModified = new Date().getTime();
         },
-        uploadToLights(state) {
+        uploadToLights(state, targetID) {
             const show = state.shows.find(
-                (show) => show.id === state.editingNowId
+                (show) => show.id === targetID
             );
             state.playingNow = JSON.parse(JSON.stringify(show));
             store.state.playingNowWatcher += 1;

@@ -7,367 +7,367 @@
     <v-col cols="12" md="4" lg="3">
       <v-card flat max-width="300" color="transparent" id="preview-card">
 
-      <!-- Back to library -->
-      <v-btn @click="routeToLibrary" small class="my-5" color="primary">Back to library</v-btn>
+        <!-- Back to library -->
+        <v-btn @click="routeToLibrary" small class="my-5" color="primary">Back to library</v-btn>
 
-      <v-card-title>Show Details</v-card-title>
+        <v-card-title>Show Details</v-card-title>
 
-      <v-card class="preview-card mb-5">
+        <v-card class="preview-card mb-5">
 
-        <!-- Show Thumbnail -->
-        <v-img class="card-image" :src="thumbnailSrc"></v-img>
+          <!-- Show Thumbnail -->
+          <v-img class="card-image" :src="thumbnailSrc"></v-img>
 
-        <!-- Template Label-->
-        <div v-if="show.template" class="text-overline ma-1 px-3 template-label">
-          TEMPLATE
+          <!-- Template Label-->
+          <div v-if="show.template" class="text-overline ma-1 px-3 template-label">
+            TEMPLATE
+          </div>
+
+          <!-- Show Title -->
+          <v-card-title class="d-inline-block text-truncate card-title" style="max-width: 100%;">{{ show.info.title }}</v-card-title>
+          <!-- Show Description -->
+          <v-card-text class="clamp-card-description">{{ show.info.description }}</v-card-text>
+
+          <!-- Show Actions -->
+          <v-card-actions>
+
+            <!-- Edit Show Info -->
+            <v-btn @click="opendAndScrollToInfoEditor" color="indigo lighten-2" text small>Edit Details</v-btn>
+            <v-spacer></v-spacer>
+
+            <!-- Tags -->
+            <v-icon v-if="show.template" small class="pr-2">mdi-lock</v-icon>
+            <v-icon v-if="show.info.favorite" small class="pr-2">mdi-heart</v-icon>
+            <v-icon v-else small class="pr-2">mdi-heart-outline</v-icon>
+
+          </v-card-actions>
+
+        </v-card>
+
+
+        <!-- Copy To New Show -->
+        <v-btn small @click="saveToNew" class="mt-5">Copy to New Show</v-btn>
+
+        <!-- Delete show -->
+        <div>
+          <v-dialog v-model="deleteShowDialog" width="500">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                  :disabled="show.template || isPublishedShow"
+                  small
+                  class="my-4"
+                  color="error"
+                  v-bind="attrs"
+                  v-on="on"
+              >
+                Delete Show
+              </v-btn>
+            </template>
+            <v-card>
+              <v-card-title>
+                Are you sure you want to delete this show?<br/>It
+                cannot be undone.
+              </v-card-title>
+              <v-divider></v-divider>
+              <v-card-actions>
+                <v-btn
+                    color="primary"
+                    text
+                    @click="deleteShowDialog = false"
+                >
+                  No, keep it.
+                </v-btn>
+                <v-spacer></v-spacer>
+                <v-btn color="primary" text @click="deleteOriginal">
+                  Yes, delete it.
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
         </div>
 
-        <!-- Show Title -->
-        <v-card-title class="d-inline-block text-truncate card-title" style="max-width: 100%;">{{ show.info.title }}</v-card-title>
-        <!-- Show Description -->
-        <v-card-text class="clamp-card-description">{{ show.info.description }}</v-card-text>
-
-        <!-- Show Actions -->
-        <v-card-actions>
-
-          <!-- Edit Show Info -->
-          <v-btn @click="opendAndScrollToInfoEditor" color="indigo lighten-2" text small>Edit Details</v-btn>
-          <v-spacer></v-spacer>
-
-          <!-- Tags -->
-          <v-icon v-if="show.template" small class="pr-2">mdi-lock</v-icon>
-          <v-icon v-if="show.info.favorite" small class="pr-2">mdi-heart</v-icon>
-          <v-icon v-else small class="pr-2">mdi-heart-outline</v-icon>
-
-        </v-card-actions>
-
       </v-card>
-
-
-      <!-- Copy To New Show -->
-      <v-btn small @click="saveToNew" class="mt-5">Copy to New Show</v-btn>
-
-      <!-- Delete show -->
-      <div>
-        <v-dialog v-model="deleteShowDialog" width="500">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-                :disabled="show.template || isPublishedShow"
-                small
-                class="my-4"
-                color="error"
-                v-bind="attrs"
-                v-on="on"
-            >
-              Delete Show
-            </v-btn>
-          </template>
-          <v-card>
-            <v-card-title>
-              Are you sure you want to delete this show?<br/>It
-              cannot be undone.
-            </v-card-title>
-            <v-divider></v-divider>
-            <v-card-actions>
-              <v-btn
-                  color="primary"
-                  text
-                  @click="deleteShowDialog = false"
-              >
-                No, keep it.
-              </v-btn>
-              <v-spacer></v-spacer>
-              <v-btn color="primary" text @click="deleteOriginal">
-                Yes, delete it.
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </div>
-
-    </v-card>
     </v-col>
 
     <!-- Editor Window -->
     <v-col cols="12" md="7" lg="8">
-     <v-card flat id="preview-editor" style="background-color: transparent;">
+      <v-card flat id="preview-editor" style="background-color: transparent;">
 
-      <!-- Editor Title / Action Bar -->
-      <v-card-title class="mb-3">
+        <!-- Editor Title / Action Bar -->
+        <v-card-title class="mb-3">
 
-        Editor
-        <v-spacer></v-spacer>
+          Editor
+          <v-spacer></v-spacer>
 
-        <!-- Save-->
-        <v-btn :disabled="show.template || unsavedChanges === false" @click="pushShowToLights(false)" small class="ml-4">Save / Preview</v-btn>
+          <!-- Save-->
+          <v-btn :disabled="show.template || unsavedChanges === false" @click="pushShowToLights(false)" small class="ml-4">Save / Preview</v-btn>
 
-        <!-- Publish to Lights -->
-        <v-btn :disabled="(this.editingNowId === this.lastPublishedShowId) && unsavedChanges === false " @click="pushShowToLights(true)" small class="ml-4" color="primary"> {{ uploadToLightsText }}</v-btn>
+          <!-- Publish to Lights -->
+          <v-btn :disabled="(this.editingNowId === this.lastPublishedShowId) && unsavedChanges === false " @click="pushShowToLights(true)" small class="ml-4" color="primary"> {{ uploadToLightsText }}</v-btn>
 
 
-      </v-card-title>
+        </v-card-title>
 
-      <!-- Important Notices -->
-      <v-alert dense type="info" v-if="templateMessage !== ''">
-        {{ templateMessage }}
-      </v-alert>
+        <!-- Important Notices -->
+        <v-alert dense type="info" v-if="templateMessage !== ''">
+          {{ templateMessage }}
+        </v-alert>
 
-      <!-- Editor Panel -->
-      <v-card>
+        <!-- Editor Panel -->
+        <v-card>
 
-        <!-- User-Defined Show Controls -->
-        <v-btn text class="ma-2" @click="toggleControlsVisibility">
-          Controls
-          <v-icon v-if="unsavedControl">mdi-circle-medium</v-icon>
-          <v-icon> {{ isComponentVisible.controls ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
-        </v-btn>
+          <!-- User-Defined Show Controls -->
+          <v-btn text class="ma-2" @click="toggleControlsVisibility">
+            Controls
+            <v-icon v-if="unsavedControl">mdi-circle-medium</v-icon>
+            <v-icon> {{ isComponentVisible.controls ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+          </v-btn>
 
-        <v-row v-show="isComponentVisible.controls">
-          <v-col cols="10">
-            <div id="controls-container">
-              <Control
-                  v-for="controlObj in controls"
-                  :key="controlObj.id"
-                  :readonly="readonly"
-                  :controlObj="controlObj"
-                  :controlIsUsedInCode="
+          <v-row v-show="isComponentVisible.controls">
+            <v-col cols="10">
+              <div id="controls-container">
+                <Control
+                    v-for="controlObj in controls"
+                    :key="controlObj.id"
+                    :readonly="readonly"
+                    :controlObj="controlObj"
+                    :controlIsUsedInCode="
                                     controlIsUsedInCode[controlObj.id]
                                 "
-                  @updateControlValue="updateControlValue"
-                  @deleteUnusedControl="
+                    @updateControlValue="updateControlValue"
+                    @deleteUnusedControl="
                                     deleteUnusedControl(controlObj.id)
                                 "
-              />
-            </div>
-          </v-col>
-          <v-col cols="2">
-            <ControlForm v-on:newControlAdded="newControlAdded" :readonly="readonly"/>
-          </v-col>
-        </v-row>
+                />
+              </div>
+            </v-col>
+            <v-col cols="2">
+              <ControlForm v-on:newControlAdded="newControlAdded" :readonly="readonly"/>
+            </v-col>
+          </v-row>
 
-        <v-divider class="mx-2"></v-divider>
+          <v-divider class="mx-2"></v-divider>
 
-        <!-- CODE -->
-        <v-btn text class="ma-2" @click="toggleCodeVisibility">
-          Code
-          <v-icon v-if="unsavedCode">mdi-circle-medium</v-icon>
-          <v-icon>{{
-              isComponentVisible.code ? 'mdi-chevron-up' : 'mdi-chevron-down'
-            }}
-          </v-icon>
-        </v-btn>
-        <div v-show="isComponentVisible.code">
-          <div>
-            <div class="console-more">
-              <v-btn
-                  class="mx-5 mt-0"
-                  small
-                  text
-                  outlined
-                  @click="toggleConsoleInfoVisibility"
-              >
+          <!-- CODE -->
+          <v-btn text class="ma-2" @click="toggleCodeVisibility">
+            Code
+            <v-icon v-if="unsavedCode">mdi-circle-medium</v-icon>
+            <v-icon>{{
+                isComponentVisible.code ? 'mdi-chevron-up' : 'mdi-chevron-down'
+              }}
+            </v-icon>
+          </v-btn>
+          <div v-show="isComponentVisible.code">
+            <div>
+              <div class="console-more">
+                <v-btn
+                    class="mx-5 mt-0"
+                    small
+                    text
+                    outlined
+                    @click="toggleConsoleInfoVisibility"
+                >
                                 <span v-if="!isComponentVisible.consoleInfo" class="mr-2"
                                 ><v-icon>mdi-chevron-left</v-icon>Dev
                                     options</span
                                 >
-                <v-icon v-else>mdi-chevron-right</v-icon>
-              </v-btn>
-<!--              <v-btn
-                  v-if="isComponentVisible.consoleInfo"
-                  :class="[
-                                    'mr-2',
-                                    'mt-0',
-                                    { btnSelected: isComponentVisible.consoleOutput }
-                                ]"
-                  small
-                  text
-                  outlined
-                  @click="setConsoleOutputVisibility"
-              >Console
-              </v-btn>-->
-              <v-btn
-                  v-if="isComponentVisible.consoleInfo"
-                  :class="[
+                  <v-icon v-else>mdi-chevron-right</v-icon>
+                </v-btn>
+                <!--              <v-btn
+                                  v-if="isComponentVisible.consoleInfo"
+                                  :class="[
+                                                    'mr-2',
+                                                    'mt-0',
+                                                    { btnSelected: isComponentVisible.consoleOutput }
+                                                ]"
+                                  small
+                                  text
+                                  outlined
+                                  @click="setConsoleOutputVisibility"
+                              >Console
+                              </v-btn>-->
+                <v-btn
+                    v-if="isComponentVisible.consoleInfo"
+                    :class="[
                                     'mr-5',
                                     'mt-0',
                                     { btnSelected: isComponentVisible.consoleHelp }
                                 ]"
-                  small
-                  text
-                  outlined
-                  @click="setConsoleHelpVisibility"
-              >Help
-              </v-btn>
+                    small
+                    text
+                    outlined
+                    @click="setConsoleHelpVisibility"
+                >Help
+                </v-btn>
+              </div>
             </div>
-          </div>
 
-          <v-card class="ma-5 pa-0 editor-and-console" flat outlined>
-            <v-row no-gutters>
-              <v-col :cols="isComponentVisible.consoleInfo ? 8 : 12">
-                <v-card tile class="ma-0 pa-0" flat>
-                  <codemirror
-                      :options="cmOptions"
-                      v-model="codeEditor"
-                      :style="{opacity: this.readonly ? '0.3' : '1', 'pointer-events': this.readonly ? 'none' : 'all'}"
-                  />
-                </v-card>
-              </v-col>
-<!--              <v-col
-                  cols="4"
-                  v-if="
-                                    isComponentVisible.consoleInfo && isComponentVisible.consoleOutput
-                                "
-              >
-                <v-card
-                    tile
-                    ref="console"
-                    class="ma-0 pa-2 console"
-                    flat
-                    color="grey lighten-4"
-                >
-                  <v-row
-                      v-for="(log, index) in logs"
-                      :key="index"
-                      class="ma-0 console-log"
-                  >
-                    <v-col
-                        cols="auto"
-                        class="ma-0 pa-0"
-                        v-if="log.type === 'err'">
-                      <pre class="console-msg-err console-msg ma-0 px-1 mr-2">Error</pre>
-                    </v-col>
-                    <v-col
-                        cols="auto"
-                        class="ma-0 pa-0"
-                        v-if="log.n > 1"
-                    >
-                                            <pre
-                                                class="
-                                                    console-msg-n console-msg
-                                                    ma-0
-                                                    mr-2
+            <v-card class="ma-5 pa-0 editor-and-console" flat outlined>
+              <v-row no-gutters>
+                <v-col :cols="isComponentVisible.consoleInfo ? 8 : 12">
+                  <v-card tile class="ma-0 pa-0" flat>
+                    <codemirror
+                        :options="cmOptions"
+                        v-model="codeEditor"
+                        :style="{opacity: this.readonly ? '0.3' : '1', 'pointer-events': this.readonly ? 'none' : 'all'}"
+                    />
+                  </v-card>
+                </v-col>
+                <!--              <v-col
+                                  cols="4"
+                                  v-if="
+                                                    isComponentVisible.consoleInfo && isComponentVisible.consoleOutput
                                                 "
-                                            >{{ log.n }}</pre
-                                            >
-                    </v-col>
-                    <v-col cols="auto" class="ma-0 pa-0">
-                                            <pre class="console-msg">{{
-                                                log.msg
-                                              }}</pre>
-                    </v-col>
-                  </v-row>
-                </v-card>
-              </v-col>-->
-              <v-col
-                  cols="4"
-                  v-if="
+                              >
+                                <v-card
+                                    tile
+                                    ref="console"
+                                    class="ma-0 pa-2 console"
+                                    flat
+                                    color="grey lighten-4"
+                                >
+                                  <v-row
+                                      v-for="(log, index) in logs"
+                                      :key="index"
+                                      class="ma-0 console-log"
+                                  >
+                                    <v-col
+                                        cols="auto"
+                                        class="ma-0 pa-0"
+                                        v-if="log.type === 'err'">
+                                      <pre class="console-msg-err console-msg ma-0 px-1 mr-2">Error</pre>
+                                    </v-col>
+                                    <v-col
+                                        cols="auto"
+                                        class="ma-0 pa-0"
+                                        v-if="log.n > 1"
+                                    >
+                                                            <pre
+                                                                class="
+                                                                    console-msg-n console-msg
+                                                                    ma-0
+                                                                    mr-2
+                                                                "
+                                                            >{{ log.n }}</pre
+                                                            >
+                                    </v-col>
+                                    <v-col cols="auto" class="ma-0 pa-0">
+                                                            <pre class="console-msg">{{
+                                                                log.msg
+                                                              }}</pre>
+                                    </v-col>
+                                  </v-row>
+                                </v-card>
+                              </v-col>-->
+                <v-col
+                    cols="4"
+                    v-if="
                                     isComponentVisible.consoleInfo && isComponentVisible.consoleHelp
                                 "
-              >
-                <v-card
-                    tile
-                    class="ma-0 pa-2 help"
-                    flat
-                    color="grey lighten-4"
                 >
-                  <HelpDesk/>
-                </v-card>
+                  <v-card
+                      tile
+                      class="ma-0 pa-2 help"
+                      flat
+                      color="grey lighten-4"
+                  >
+                    <HelpDesk/>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </v-card>
+          </div>
+
+          <v-divider class="mx-2"></v-divider>
+
+          <!-- INFO EDITOR -->
+          <v-btn
+              text
+              class="ma-2"
+              @click="toggleInfoVisibility"
+              id="info"
+          >
+            Info & Credits
+            <v-icon v-if="unsavedInfo">mdi-circle-medium</v-icon>
+            <v-icon>{{
+                isComponentVisible.info ? 'mdi-chevron-up' : 'mdi-chevron-down'
+              }}
+            </v-icon>
+          </v-btn>
+          <v-form v-show="isComponentVisible.info" :disabled="readonly">
+            <v-row class="mx-4">
+              <v-col cols="2">
+                <p class="form-field">Title</p>
+              </v-col>
+              <v-col cols="3">
+                <v-text-field
+                    v-model="show.info.title"
+                    outlined dense
+                    hint="Enter the title of the show"
+                    :rules="[infoValidation.titleCharLimit]"
+                    counter
+                    @focus="unsavedInfo = true"
+                ></v-text-field>
               </v-col>
             </v-row>
-          </v-card>
-        </div>
 
-        <v-divider class="mx-2"></v-divider>
+            <v-row class="mx-4">
+              <v-col cols="2">
+                <p class="form-field">Subtitle</p>
+              </v-col>
+              <v-col cols="3">
+                <v-textarea
+                    v-model="show.info.description"
+                    outlined dense
+                    rows="3"
+                    no-resize
+                    :rules="[infoValidation.shortDescriptionCharLimit]"
+                    counter
+                    maxlength="75"
+                    hint="Enter a subtitle for the show"
+                    @focus="unsavedInfo = true"
+                ></v-textarea>
+              </v-col>
+            </v-row>
 
-        <!-- INFO EDITOR -->
-        <v-btn
-            text
-            class="ma-2"
-            @click="toggleInfoVisibility"
-            id="info"
-        >
-          Info & Credits
-          <v-icon v-if="unsavedInfo">mdi-circle-medium</v-icon>
-          <v-icon>{{
-              isComponentVisible.info ? 'mdi-chevron-up' : 'mdi-chevron-down'
-            }}
-          </v-icon>
-        </v-btn>
-        <v-form v-show="isComponentVisible.info" :disabled="readonly">
-          <v-row class="mx-4">
-            <v-col cols="2">
-              <p class="form-field">Title</p>
-            </v-col>
-            <v-col cols="3">
-              <v-text-field
-                  v-model="show.info.title"
-                  outlined dense
-                  hint="Enter the title of the show"
-                  :rules="[infoValidation.titleCharLimit]"
-                  counter
-                  @focus="unsavedInfo = true"
-              ></v-text-field>
-            </v-col>
-          </v-row>
+            <v-row class="mx-4">
+              <v-col cols="2">
+                <p class="form-field">Cover Image</p>
+              </v-col>
+              <v-col cols="3">
+                <v-img
+                    class="card-img-thumb"
+                    :src="thumbnailSrc"
+                ></v-img>
+                <v-file-input
+                    accept=".png"
+                    :clearable="false"
+                    prepend-icon=""
+                    label="Click to upload..."
+                    @change="copyAsset"
+                    outlined
+                    dense
+                    class="card-img-input"
+                ></v-file-input>
+              </v-col>
+            </v-row>
 
-          <v-row class="mx-4">
-            <v-col cols="2">
-              <p class="form-field">Subtitle</p>
-            </v-col>
-            <v-col cols="3">
-              <v-textarea
-                  v-model="show.info.description"
-                  outlined dense
-                  rows="3"
-                  no-resize
-                  :rules="[infoValidation.shortDescriptionCharLimit]"
-                  counter
-                  maxlength="75"
-                  hint="Enter a subtitle for the show"
-                  @focus="unsavedInfo = true"
-              ></v-textarea>
-            </v-col>
-          </v-row>
+            <v-row class="mx-4">
+              <v-col cols="2">
+                <p class="form-field">Tags</p>
+              </v-col>
+              <v-col cols="3">
+                <v-checkbox
+                    class="ma-0"
+                    v-model="show.info.favorite"
+                    label="Mark as a favorite"
+                    @change="unsavedInfo = true"
+                ></v-checkbox>
+              </v-col>
+            </v-row>
 
-          <v-row class="mx-4">
-            <v-col cols="2">
-              <p class="form-field">Cover Image</p>
-            </v-col>
-            <v-col cols="3">
-              <v-img
-                  class="card-img-thumb"
-                  :src="thumbnailSrc"
-              ></v-img>
-              <v-file-input
-                  accept=".png"
-                  :clearable="false"
-                  prepend-icon=""
-                  label="Click to upload..."
-                  @change="copyAsset"
-                  outlined
-                  dense
-                  class="card-img-input"
-              ></v-file-input>
-            </v-col>
-          </v-row>
-
-          <v-row class="mx-4">
-            <v-col cols="2">
-              <p class="form-field">Tags</p>
-            </v-col>
-            <v-col cols="3">
-              <v-checkbox
-                  class="ma-0"
-                  v-model="show.info.favorite"
-                  label="Mark as a favorite"
-                  @change="unsavedInfo = true"
-              ></v-checkbox>
-            </v-col>
-          </v-row>
-
-        </v-form>
+          </v-form>
+        </v-card>
       </v-card>
-    </v-card>
     </v-col>
 
   </v-row>
@@ -446,7 +446,7 @@ export default {
     this.ready = true;
 
     this.$nextTick(() => {
-      this.pushShowToLights(false);
+      this.pushShowToLights(false, true);
     })
   },
   computed: {
@@ -483,7 +483,7 @@ export default {
       return `asset://${this.thumbnail}`;
     },
     isPublishedShow() {
-      if(this.$store.state.lastPublishedShow === null){
+      if (this.$store.state.lastPublishedShow === null) {
         return false;
       }
       return this.editingNowId === this.lastPublishedShowId || this.id === this.lastPublishedShowId;
@@ -532,7 +532,7 @@ export default {
       }
       return '';
     },
-    lastPublishedShowId(){
+    lastPublishedShowId() {
       return this.$store.state.lastPublishedShow ? this.$store.state.lastPublishedShow.id : null;
     }
   },
@@ -557,6 +557,7 @@ export default {
     saveToOriginal() {
       this.show.info.thumbnail = this.thumbnail
       this.$store.commit('saveToOriginal', {
+        id: this.id,
         info: this.show.info,
         controls: this.controls,
         code: this.codeEditor
@@ -589,8 +590,9 @@ export default {
     /**
      * Takes the show in the editor, saves it, and uploads it to the illuminationsPreview window and live lights output
      * @param publishShow Whether or not to set this show as the active "published" show (or just display it)
+     * @param initialMount Whether or not this is the initial mount of the show, in which case, don't clear errors.
      */
-    pushShowToLights(publishShow = false) {
+    pushShowToLights(publishShow = false, initialMount = false) {
       // Clear the log
       // this.logs = [];
 
@@ -598,11 +600,22 @@ export default {
       this.saveToOriginal();
 
       // Set the editing now show to the playing now show
-      this.$store.commit('uploadToLights');
+      this.$store.commit('uploadToLights', this.id);
 
       if (publishShow) {
         this.$store.commit('setLastPublishedShow', this.id);
       }
+
+      // Clear any existing error for this show
+      if (this.id === this.$store.state.errorID && !initialMount) {
+        if (this.$store.state.lastPublishedShow) {
+          if (this.id === this.$store.state.lastPublishedShow.id) {
+            this.$store.commit('setLastPublishedShow', this.id);
+          }
+        }
+        this.$store.commit('clearError');
+      }
+
     },
     //
     // Editing

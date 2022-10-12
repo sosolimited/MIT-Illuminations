@@ -68,7 +68,7 @@ export default {
   },
   mounted() {
     // Prepare the protected variables
-    this.protectedVariables = Object.keys( window );
+    this.protectedVariables = Object.keys(window);
     // Deploy the P5
     this.$nextTick(() => {
       this.deployToP5();
@@ -298,6 +298,16 @@ export default {
 
       }
 
+      // Bad Show
+      if ('errorFlag' in window.vueApplication.$store.state && 'errorID' in window.vueApplication.$store.state) {
+        if (window.vueApplication.$store.state.errorFlag && window.vueApplication.$store.state.errorID === window.vueApplication.$store.state.playingNow.id) {
+          const previewCanvas = document.getElementById('previewDisplay');
+          const ctx = previewCanvas.getContext('2d');
+          ctx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+          return;
+        }
+      }
+
       // Rewrite instance mode code to global mode (assuming `p5` used as namespace)
       let outputCode = this.code.replace(/new p5\./g, 'translate-to-global-instance');
       outputCode = outputCode.replace(/p5\./g, 'window.');
@@ -316,7 +326,7 @@ export default {
         const userCodeSyntax = parse(outputCode, {ecmaVersion: 2020});
 
         // Whoops, the user tried to throw an error
-        if(userCodeSyntax["body"].filter(item => {
+        if (userCodeSyntax["body"].filter(item => {
           return item.type === 'ThrowStatement';
         }).length > 0) {
           this.errorMessage = "Please remove your thrown error/exception - Illuminations doesn't support this yet.";
@@ -325,7 +335,7 @@ export default {
         }
 
         // Whoops, the user forgot a setup/draw method
-        if(userCodeSyntax["body"].filter(item => {
+        if (userCodeSyntax["body"].filter(item => {
           return item.type === 'FunctionDeclaration' && (item.id.name === 'setup' || item.id.name === 'draw');
         }).length < 2) {
           this.errorMessage = "Please add a setup() and draw() method to your code.";
@@ -334,9 +344,9 @@ export default {
         }
 
         // Make sure no variable names conflict with our protectedVariables list
-        for(let item of userCodeSyntax["body"]){
-          if(item.type === 'FunctionDeclaration'){
-            for(const element of item["body"]["body"]) {
+        for (let item of userCodeSyntax["body"]) {
+          if (item.type === 'FunctionDeclaration') {
+            for (const element of item["body"]["body"]) {
               if (element.type === 'VariableDeclaration') {
                 for (let declaration of element["declarations"]) {
                   if (this.protectedVariables.includes(declaration.id.name)) {
@@ -345,6 +355,14 @@ export default {
                     return;
                   }
                 }
+              }
+            }
+          } else if (item.type === 'VariableDeclaration') {
+            for (let declaration of item["declarations"]) {
+              if (this.protectedVariables.includes(declaration.id.name)) {
+                this.errorMessage = "Please rename your variable '" + declaration.id.name + "' - it conflicts with a protected variable name.";
+                this.snackbar = true;
+                return;
               }
             }
           }
