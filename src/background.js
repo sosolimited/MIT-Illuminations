@@ -91,20 +91,32 @@ function createWindow() {
     });
 
     // Disable the currently playing show on application crash/hang
-    win.webContents.on('unresponsive', async () => {
-        let tempStore = new electronStore({
-            cwd: userDataPath
-        });
-        let tempState = tempStore.get('state');
-        tempState.errorFlag = true;
-        tempState.errorTitle = tempState.playingNow.info.title;
-        tempState.errorID = tempState.playingNow.id;
-        tempStore.set('state', tempState);
-        await dialog.showErrorBox('Illuminations by MIT is unresponsive', 'The Illuminations by MIT application is unresponsive. This may be due to an infinite loop or a small bug in the code of your show, "' + tempState.playingNow.info.title + '". The application will restart, and the problematic show will be temporarily disabled until you can fix the issue.');
+    win.webContents.on('unresponsive', handleCrash);
+    win.webContents.on('crashed', handleCrash);
+    win.webContents.on('render-process-gone', async (e, details) => {
+        if (details.reason === 'crashed' || details.reason === 'abnormal-exit' || details.reason === 'oom') {
+            await handleCrash();
+        }
+    });
+
+    async function handleCrash() {
+        try {
+            let tempStore = new electronStore({
+                cwd: userDataPath
+            });
+            let tempState = tempStore.get('state');
+            tempState.errorFlag = true;
+            tempState.errorTitle = tempState.playingNow.info.title;
+            tempState.errorID = tempState.playingNow.id;
+            tempStore.set('state', tempState);
+        } catch (e) {
+            dialog.showErrorBox('Error', 'An error occurred while trying to log an error - yeah, weird. Please let SOSO know.');
+        }
+        await dialog.showErrorBox('Illuminations by MIT is unresponsive', 'The Illuminations by MIT application is unresponsive. This may be due to an infinite loop or a small bug in the code of your show, "' + tempState.playingNow.info.title + '" if you were editing code at the time. The application will restart, and the problematic show will be temporarily disabled.');
         win.destroy();
         app.relaunch();
         app.exit();
-    });
+    }
 }
 
 // Quit when all windows are closed.
