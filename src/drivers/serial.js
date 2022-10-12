@@ -38,7 +38,8 @@ const serialMixin = {
             if (this.selectedSerialPort) {
                 if (this.selectedSerialPort.length && this.connectedToSerial === false) {
 
-                    this.port = new SerialPort(this.selectedSerialPort, {
+                    this.port = new SerialPort({
+                        path: this.selectedSerialPort,
                         baudRate: 115200,
                         parity: 'none',
                         stopBits: 1,
