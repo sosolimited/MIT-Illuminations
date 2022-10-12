@@ -9,6 +9,8 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 const path = require('path');
 const userDataPath = app.getPath('userData');
 
+let pendingRenderReset = false;
+
 // If any of the starter assets aren't in the userData path,
 // copy them now in the background.
 copyAssets();
@@ -92,19 +94,26 @@ function createWindow() {
 
     // Disable the currently playing show on application crash/hang
     win.webContents.on('unresponsive', handleCrash);
-    win.webContents.on('crashed', handleCrash);
     win.webContents.on('render-process-gone', async (e, details) => {
+        // this crash event was self-triggered to force a render process reload, so ignore
+        if( pendingRenderReset ){
+            pendingRenderReset = false;
+            return;
+        }
+
         if (details.reason === 'crashed' || details.reason === 'abnormal-exit' || details.reason === 'oom') {
             await handleCrash();
         }
     });
 
     async function handleCrash() {
+        let tempState;
+
         try {
-            let tempStore = new electronStore({
+            const tempStore = new electronStore({
                 cwd: userDataPath
             });
-            let tempState = tempStore.get('state');
+            tempState = tempStore.get('state');
             tempState.errorFlag = true;
             tempState.errorTitle = tempState.playingNow.info.title;
             tempState.errorID = tempState.playingNow.id;
@@ -113,9 +122,13 @@ function createWindow() {
             dialog.showErrorBox('Error', 'An error occurred while trying to log an error - yeah, weird. Please let SOSO know.');
         }
         await dialog.showErrorBox('Illuminations by MIT is unresponsive', 'The Illuminations by MIT application is unresponsive. This may be due to an infinite loop or a small bug in the code of your show, "' + tempState.playingNow.info.title + '" if you were editing code at the time. The application will restart, and the problematic show will be temporarily disabled.');
-        win.destroy();
-        app.relaunch();
-        app.exit();
+        
+        pendingRenderReset = true;
+
+        // crash render process so we can unlock the thread and reload it in place
+        win.webContents.forcefullyCrashRenderer();
+        win.reload();
+        // app.exit();
     }
 }
 
