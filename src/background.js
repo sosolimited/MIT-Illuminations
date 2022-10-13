@@ -5,7 +5,7 @@ import unhandled from "electron-unhandled";
 
 unhandled();
 
-import {app, BrowserWindow, Menu, protocol, dialog} from 'electron'
+import {app, BrowserWindow, Menu, protocol, dialog, ipcMain} from 'electron'
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
 import {copyAssets, getAssetPath} from './assets'
 import electronStore from "electron-store";
@@ -20,19 +20,6 @@ copyAssets();
 
 // Fix for serialport usage
 app.allowRendererProcessReuse = false;
-
-// No activity on GPU when enabled... but complex scenes are 1-3FPS
-//app.commandLine.appendSwitch('disable-gpu-compositing');
-
-// Same as above
-//app.commandLine.appendSwitch('disable-gpu');
-
-// Same as above
-// app.disableHardwareAcceleration();
-
-// Doesn't seem to do anything, but might fix a weird driver issue?
-//app.commandLine.appendSwitch('disable-gpu-sandbox');
-//app.commandLine.appendSwitch('--no-sandbox');
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -90,12 +77,26 @@ function createWindow() {
         setTimeout(() => {
             win.focus();
         }, 200);
-    });
 
-    win.on('shown', () => {
-        setTimeout(() => {
-            win.focus();
-        }, 200);
+        // Receive messages from the renderer, and assume we crashed if we don't get some for a while
+        let killIPCTimeout;
+        ipcMain.on('ping', () => {
+            clearTimeout(killIPCTimeout);
+            killIPCTimeout = setTimeout(async () => {
+                let tempStore = new electronStore({
+                    cwd: userDataPath
+                });
+                let tempState = tempStore.get('state');
+                tempState.errorFlag = true;
+                tempState.errorTitle = tempState.playingNow.info.title;
+                tempState.errorID = tempState.playingNow.id;
+                tempStore.set('state', tempState);
+                await dialog.showErrorBox('Illuminations by MIT is unresponsive', 'The Illuminations by MIT application is unresponsive. This may be due to an infinite loop or a small bug in the code of your show, "' + tempState.playingNow.info.title + '" if you were editing code at the time. The application will restart, and the problematic show will be temporarily disabled.');
+                win.webContents.forcefullyCrashRenderer();
+                win.reload();
+            }, 3000);
+        });
+
     });
 
     win.webContents.once('did-finish-load', () => {

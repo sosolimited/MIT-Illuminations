@@ -36,6 +36,8 @@
 import Header from './components/Header.vue'
 import PlayingNow from './components/PlayingNow.vue'
 
+const {ipcRenderer} = require('electron');
+
 export default {
   name: 'App',
   components: {
@@ -48,11 +50,13 @@ export default {
     }
   },
   mounted() {
-    // Maintenance of the Vuex store depends on the Vue component destroy lifecycle.
-    // There are some conditions in which the electron app closes, and Vue
-    // does not properly get destroyed. This leaves tmp show data in the store.
-    // When the app opens, we remove any tmp data that was not properly destroyed.
-    this.$store.commit('removeTmpShows')
+
+    // Clean-up and make sure we stay alive.
+    this.$store.commit('removeTmpShows');
+    setInterval(() => {
+      ipcRenderer.send('ping');
+    }, 1000);
+
   },
   computed: {
     // Store values to watch
