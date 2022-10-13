@@ -21,6 +21,10 @@ copyAssets();
 // Fix for serialport usage
 app.allowRendererProcessReuse = false;
 
+// Fix for socket connection
+app.commandLine.appendSwitch('disable-renderer-backgrounding');
+app.commandLine.appendSwitch('--disable-renderer-backgrounding');
+
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
     {
@@ -37,7 +41,78 @@ function createWindow() {
 
     // Establish the splash screen
     const splash = new BrowserWindow({width: 800, height: 500, transparent: true, frame: false, alwaysOnTop: true});
-    Menu.setApplicationMenu(null);
+    //Menu.setApplicationMenu(null);
+
+    const template = [
+        {
+            label: 'Edit',
+            submenu: [
+                {
+                    role: 'undo'
+                },
+                {
+                    role: 'redo'
+                },
+                {
+                    type: 'separator'
+                },
+                {
+                    role: 'cut'
+                },
+                {
+                    role: 'copy'
+                },
+                {
+                    role: 'paste'
+                }
+            ]
+        },
+
+        {
+            label: 'View',
+            submenu: [
+                {
+                    role: 'reload'
+                },
+                {
+                    role: 'toggledevtools'
+                },
+                {
+                    type: 'separator'
+                },
+                {
+                    role: 'resetzoom'
+                },
+                {
+                    role: 'zoomin'
+                },
+                {
+                    role: 'zoomout'
+                },
+                {
+                    type: 'separator'
+                },
+                {
+                    role: 'togglefullscreen'
+                }
+            ]
+        },
+
+        {
+            role: 'window',
+            submenu: [
+                {
+                    role: 'minimize'
+                },
+                {
+                    role: 'close'
+                }
+            ]
+        }
+    ]
+
+    const menu = Menu.buildFromTemplate(template);
+    Menu.setApplicationMenu(menu);
 
     // Create the browser window.
     const win = new BrowserWindow({
@@ -56,7 +131,6 @@ function createWindow() {
             contextIsolation: false,
             webSecurity: false,
             preload: path.join(__dirname, 'preload.js'),
-            devTools: isDevelopment,
             additionalArguments: [userDataPath]
         }
     });
@@ -64,7 +138,6 @@ function createWindow() {
     if (process.env.WEBPACK_DEV_SERVER_URL) {
         splash.loadURL(`file://${__dirname}/../public/splash.html`).catch(console.log);
         win.loadURL(`${process.env.WEBPACK_DEV_SERVER_URL}`).catch(console.log);
-        win.webContents.openDevTools();
     } else {
         createProtocol('app');
         splash.loadURL(`app://./splash.html`).catch(console.log);
@@ -73,39 +146,13 @@ function createWindow() {
         });
     }
 
-    win.on('show', () => {
-        setTimeout(() => {
-            win.focus();
-        }, 200);
+    let crashResetPending = false;
 
-        // Receive messages from the renderer, and assume we crashed if we don't get some for a while
-        let killIPCTimeout;
-        ipcMain.on('ping', () => {
-            clearTimeout(killIPCTimeout);
-            killIPCTimeout = setTimeout(async () => {
-                let tempStore = new electronStore({
-                    cwd: userDataPath
-                });
-                let tempState = tempStore.get('state');
-                tempState.errorFlag = true;
-                tempState.errorTitle = tempState.playingNow.info.title;
-                tempState.errorID = tempState.playingNow.id;
-                tempStore.set('state', tempState);
-                await dialog.showErrorBox('Illuminations by MIT is unresponsive', 'The Illuminations by MIT application is unresponsive. This may be due to an infinite loop or a small bug in the code of your show, "' + tempState.playingNow.info.title + '" if you were editing code at the time. The application will restart, and the problematic show will be temporarily disabled.');
-                win.webContents.forcefullyCrashRenderer();
-                win.reload();
-            }, 3000);
-        });
-
-    });
-
-    win.webContents.once('did-finish-load', () => {
-        splash.destroy();
-        win.show();
-    });
-
-    // Disable the currently playing show on application crash/hang
-    win.webContents.on('unresponsive', async () => {
+    async function handleCrash() {
+        if (crashResetPending) {
+            return;
+        }
+        crashResetPending = true;
         let tempStore = new electronStore({
             cwd: userDataPath
         });
@@ -117,21 +164,33 @@ function createWindow() {
         await dialog.showErrorBox('Illuminations by MIT is unresponsive', 'The Illuminations by MIT application is unresponsive. This may be due to an infinite loop or a small bug in the code of your show, "' + tempState.playingNow.info.title + '" if you were editing code at the time. The application will restart, and the problematic show will be temporarily disabled.');
         win.webContents.forcefullyCrashRenderer();
         win.reload();
+        crashResetPending = false;
+    }
+
+    win.on('show', () => {
+        setTimeout(() => {
+            win.focus();
+        }, 200);
+
+        // Receive messages from the renderer, and assume we crashed if we don't get some for a while
+        let killIPCTimeout;
+        ipcMain.on('ping', () => {
+            clearTimeout(killIPCTimeout);
+            killIPCTimeout = setTimeout(handleCrash, 3000);
+        });
+
     });
+
+    win.once('ready-to-show', () => {
+        splash.destroy();
+        win.show();
+    });
+
+    // Disable the currently playing show on application crash/hang
+    win.webContents.on('unresponsive', handleCrash);
     win.webContents.on('render-process-gone', async (e, details) => {
-        console.log("render-process-gone", details);
         if (details.reason === 'crashed' || details.reason === 'abnormal-exit' || details.reason === 'oom') {
-            let tempStore = new electronStore({
-                cwd: userDataPath
-            });
-            let tempState = tempStore.get('state');
-            tempState.errorFlag = true;
-            tempState.errorTitle = tempState.playingNow.info.title;
-            tempState.errorID = tempState.playingNow.id;
-            tempStore.set('state', tempState);
-            await dialog.showErrorBox('Illuminations by MIT is unresponsive', 'The Illuminations by MIT application is unresponsive. This may be due to an infinite loop or a small bug in the code of your show, "' + tempState.playingNow.info.title + '" if you were editing code at the time. The application will restart, and the problematic show will be temporarily disabled.');
-            win.webContents.forcefullyCrashRenderer();
-            win.reload();
+            await handleCrash();
         }
     });
 }
