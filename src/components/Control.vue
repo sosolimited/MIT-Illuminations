@@ -10,7 +10,7 @@
       {{ `controls.${controlObj.id}.value = ${controlObj.value}` }}
     </v-card-subtitle>
     <v-card-subtitle v-else class="pa-0 mx-2 mb-4">
-      {{ `p5.loadControlImage(controls.${controlObj.id}.value)` }}
+      {{ `loadControlImage(controls.${controlObj.id}.value)` }}
     </v-card-subtitle>
 
     <!-- COLOR PICKER -->

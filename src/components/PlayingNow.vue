@@ -99,16 +99,6 @@ export default {
       window.controls = this.controls;
 
       /**
-       * Provides a method within P5 by which users can load images from controls into their code.
-       * @param filename
-       * @param callback
-       * @returns {*}
-       */
-      window.loadControlImage = function (filename, callback) {
-        return window.loadImage(`asset://${filename}`, callback);
-      }
-
-      /**
        * Overrides the typical `addPreviewAnnotations` call, to avoid drawing illuminationsPreview screen elements to output
        * @returns {boolean}
        */
@@ -316,6 +306,7 @@ export default {
       outputCode = outputCode.replace(/controls/g, 'window.controls');
       outputCode = outputCode.replace(/let /g, 'var ');
       outputCode = outputCode.replace(/const /g, 'var ');
+      outputCode = outputCode.replace('loadControlImage(', 'loadImage("asset://" + ');
 
       /* When the application runs, it should enumerate all method/property names in window into an array in the vuex store */
       /* Then, when we parse the user's code, we should try and find variable names that are in that list, and block/stop if that's the case */

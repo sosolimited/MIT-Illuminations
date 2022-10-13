@@ -102,7 +102,7 @@
         </li>
         <li>
           To load a control image in the code, use the custom
-          <span class="code">p5.loadControlImage</span> function. For
+          <span class="code">loadControlImage</span> function. For
           example, if your image has an id
           <span class="code">myImage</span>, you can load the image
           (and optionally request a callback) using
