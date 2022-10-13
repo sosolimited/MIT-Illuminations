@@ -1,5 +1,10 @@
 'use strict'
 
+// Handle any uncaught exceptions
+import unhandled from "electron-unhandled";
+
+unhandled();
+
 import {app, BrowserWindow, Menu, protocol, dialog} from 'electron'
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
 import {copyAssets, getAssetPath} from './assets'
@@ -12,10 +17,6 @@ const userDataPath = app.getPath('userData');
 // If any of the starter assets aren't in the userData path,
 // copy them now in the background.
 copyAssets();
-
-// Fix for socket connection
-app.commandLine.appendSwitch('disable-renderer-backgrounding');
-app.commandLine.appendSwitch('--disable-renderer-backgrounding');
 
 // Fix for serialport usage
 app.allowRendererProcessReuse = false;
@@ -85,6 +86,18 @@ function createWindow() {
         });
     }
 
+    win.on('show', () => {
+        setTimeout(() => {
+            win.focus();
+        }, 200);
+    });
+
+    win.on('shown', () => {
+        setTimeout(() => {
+            win.focus();
+        }, 200);
+    });
+
     win.webContents.once('did-finish-load', () => {
         splash.destroy();
         win.show();
@@ -101,23 +114,8 @@ function createWindow() {
         tempState.errorID = tempState.playingNow.id;
         tempStore.set('state', tempState);
         await dialog.showErrorBox('Illuminations by MIT is unresponsive', 'The Illuminations by MIT application is unresponsive. This may be due to an infinite loop or a small bug in the code of your show, "' + tempState.playingNow.info.title + '" if you were editing code at the time. The application will restart, and the problematic show will be temporarily disabled.');
-        win.destroy();
-        app.relaunch();
-        app.exit();
-    });
-    win.webContents.on('crashed', async () => {
-        let tempStore = new electronStore({
-            cwd: userDataPath
-        });
-        let tempState = tempStore.get('state');
-        tempState.errorFlag = true;
-        tempState.errorTitle = tempState.playingNow.info.title;
-        tempState.errorID = tempState.playingNow.id;
-        tempStore.set('state', tempState);
-        await dialog.showErrorBox('Illuminations by MIT is unresponsive', 'The Illuminations by MIT application is unresponsive. This may be due to an infinite loop or a small bug in the code of your show, "' + tempState.playingNow.info.title + '" if you were editing code at the time. The application will restart, and the problematic show will be temporarily disabled.');
-        win.destroy();
-        app.relaunch();
-        app.exit();
+        win.webContents.forcefullyCrashRenderer();
+        win.reload();
     });
     win.webContents.on('render-process-gone', async (e, details) => {
         console.log("render-process-gone", details);
@@ -131,9 +129,8 @@ function createWindow() {
             tempState.errorID = tempState.playingNow.id;
             tempStore.set('state', tempState);
             await dialog.showErrorBox('Illuminations by MIT is unresponsive', 'The Illuminations by MIT application is unresponsive. This may be due to an infinite loop or a small bug in the code of your show, "' + tempState.playingNow.info.title + '" if you were editing code at the time. The application will restart, and the problematic show will be temporarily disabled.');
-            win.destroy();
-            app.relaunch();
-            app.exit();
+            win.webContents.forcefullyCrashRenderer();
+            win.reload();
         }
     });
 }

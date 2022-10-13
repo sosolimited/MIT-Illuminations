@@ -84,12 +84,6 @@ export default {
 <style scoped>
 #header {
   padding: 0 60px;
-  -webkit-user-select: none;
-  -webkit-app-region: drag;
-}
-
-#header * {
-  -webkit-app-region: no-drag;
 }
 
 #lights-text {

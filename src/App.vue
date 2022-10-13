@@ -96,11 +96,6 @@ export default {
   min-width: 1000px;
 }
 
-#previewDisplay{
-  -webkit-user-select: none;
-  -webkit-app-region: drag;
-}
-
 @media only screen and (max-width: 1400px) {
   #content {
     padding: 0;
