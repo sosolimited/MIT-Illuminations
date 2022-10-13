@@ -167,36 +167,8 @@
                     @click="toggleConsoleInfoVisibility"
                 >
                                 <span v-if="!isComponentVisible.consoleInfo" class="mr-2"
-                                ><v-icon>mdi-chevron-left</v-icon>Dev
-                                    options</span
-                                >
+                                ><v-icon>mdi-chevron-left</v-icon>Help</span>
                   <v-icon v-else>mdi-chevron-right</v-icon>
-                </v-btn>
-                <!--              <v-btn
-                                  v-if="isComponentVisible.consoleInfo"
-                                  :class="[
-                                                    'mr-2',
-                                                    'mt-0',
-                                                    { btnSelected: isComponentVisible.consoleOutput }
-                                                ]"
-                                  small
-                                  text
-                                  outlined
-                                  @click="setConsoleOutputVisibility"
-                              >Console
-                              </v-btn>-->
-                <v-btn
-                    v-if="isComponentVisible.consoleInfo"
-                    :class="[
-                                    'mr-5',
-                                    'mt-0',
-                                    { btnSelected: isComponentVisible.consoleHelp }
-                                ]"
-                    small
-                    text
-                    outlined
-                    @click="setConsoleHelpVisibility"
-                >Help
                 </v-btn>
               </div>
             </div>
@@ -212,56 +184,10 @@
                     />
                   </v-card>
                 </v-col>
-                <!--              <v-col
-                                  cols="4"
-                                  v-if="
-                                                    isComponentVisible.consoleInfo && isComponentVisible.consoleOutput
-                                                "
-                              >
-                                <v-card
-                                    tile
-                                    ref="console"
-                                    class="ma-0 pa-2 console"
-                                    flat
-                                    color="grey lighten-4"
-                                >
-                                  <v-row
-                                      v-for="(log, index) in logs"
-                                      :key="index"
-                                      class="ma-0 console-log"
-                                  >
-                                    <v-col
-                                        cols="auto"
-                                        class="ma-0 pa-0"
-                                        v-if="log.type === 'err'">
-                                      <pre class="console-msg-err console-msg ma-0 px-1 mr-2">Error</pre>
-                                    </v-col>
-                                    <v-col
-                                        cols="auto"
-                                        class="ma-0 pa-0"
-                                        v-if="log.n > 1"
-                                    >
-                                                            <pre
-                                                                class="
-                                                                    console-msg-n console-msg
-                                                                    ma-0
-                                                                    mr-2
-                                                                "
-                                                            >{{ log.n }}</pre
-                                                            >
-                                    </v-col>
-                                    <v-col cols="auto" class="ma-0 pa-0">
-                                                            <pre class="console-msg">{{
-                                                                log.msg
-                                                              }}</pre>
-                                    </v-col>
-                                  </v-row>
-                                </v-card>
-                              </v-col>-->
                 <v-col
                     cols="4"
                     v-if="
-                                    isComponentVisible.consoleInfo && isComponentVisible.consoleHelp
+                                    isComponentVisible.consoleInfo
                                 "
                 >
                   <v-card
@@ -419,8 +345,7 @@ export default {
         code: true,
         info: false,
         consoleInfo: false,
-        consoleOutput: true,
-        consoleHelp: false
+        consoleHelp: true
       },
       codeEditor: null,
       isCodeRunning: true,
@@ -655,14 +580,6 @@ export default {
     },
     toggleConsoleInfoVisibility() {
       this.isComponentVisible.consoleInfo = !this.isComponentVisible.consoleInfo
-    },
-    setConsoleOutputVisibility() {
-      this.isComponentVisible.consoleOutput = true
-      this.isComponentVisible.consoleHelp = false
-    },
-    setConsoleHelpVisibility() {
-      this.isComponentVisible.consoleOutput = false
-      this.isComponentVisible.consoleHelp = true
     },
     //
     // Control updates

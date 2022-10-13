@@ -122,9 +122,7 @@
     <div class="help-section">
       <h3>Console</h3>
       <p>
-        The code editor comes with a custom console. Most code errors
-        will be caught and raised in the console. Messages can also be
-        written to the console via
+        Whenever you save code, we check to make sure it's syntactically correct and will notify you if it isn't. To open the console, should you need it, click "View > Toggle Developer Tools" in the application menu/toolbar. Messages can also be written to the console via
         <span class="code">console.log()</span>.
       </p>
     </div>

@@ -52,17 +52,5 @@ window.fse.copyAsset = async (src, id) => {
     }
 };
 
-// DevTools
-const currentWebContents = require('electron').remote.getCurrentWebContents();
-document.addEventListener('keyup', ({key, ctrlKey, shiftKey, metaKey, altKey}) => {
-    if (
-        key === 'F12' ||
-        (ctrlKey && shiftKey && key === 'I') ||
-        (metaKey && altKey && key === 'i')
-    ) {
-        currentWebContents.openDevTools();
-    }
-});
-
 
 
