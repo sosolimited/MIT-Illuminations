@@ -71,7 +71,12 @@ export default {
     this.protectedVariables = Object.keys(window);
     // Deploy the P5
     this.$nextTick(() => {
-      this.deployToP5();
+      setTimeout(() => {
+        this.deployToP5();
+        this.$watch('playingNowWatcher', this.deployToP5);
+        this.$watch('numLights', this.deployToP5);
+        this.$watch('lightsOn', this.deployToP5);
+      }, 1000);
     });
   },
   methods: {
@@ -409,23 +414,6 @@ export default {
       window.illuminationsP5.pixelDensity(1);
     },
 
-  },
-  watch: {
-    playingNowWatcher: {
-      handler() {
-        this.deployToP5();
-      }
-    },
-    lightsOn: {
-      handler() {
-        this.deployToP5();
-      }
-    },
-    numLights: {
-      handler() {
-        this.deployToP5();
-      }
-    }
   }
 }
 </script>
