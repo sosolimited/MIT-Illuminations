@@ -96,7 +96,7 @@ export default {
       if (window.p5 && window.p5.instance) {
         window.draw = null;
         window.p5.instance.remove();
-        window.p5.instance = window.setup = window.draw = window.preload = null;
+        window.p5.instance = window.preload = window.setup = window.draw = undefined;
       }
 
       // Move our helpers and controls into the global namespace
@@ -181,112 +181,123 @@ export default {
           return;
         }
 
+        // Preload didn't run yet.
+        if(!window.preloadComplete){
+          return;
+        }
+
         ///////////////////
         // Code Mode (2) //
         ///////////////////
 
-        if (window.vueApplication.$store.state.previewMode === 2) {
-          ctx.globalCompositeOperation = 'normal';
-          ctx.fillStyle = "#000000";
-          ctx.fillRect(0, 0, previewCanvas.width, previewCanvas.height);
-          ctx.drawImage(document.getElementById('defaultCanvas0'), 0, 0, 1200, 100, 0, 0, 1920, 160);
+        try {
 
-          // All done
-          return true;
+          if (window.vueApplication.$store.state.previewMode === 2) {
+            ctx.globalCompositeOperation = 'normal';
+            ctx.fillStyle = "#000000";
+            ctx.fillRect(0, 0, previewCanvas.width, previewCanvas.height);
+            ctx.drawImage(document.getElementById('defaultCanvas0'), 0, 0, 1200, 100, 0, 0, 1920, 160);
 
-        }
+            // All done
+            return true;
 
-        // Sample Data
-        const illuminations__step = Math.floor(p5.width / samples.length)
-        const illuminations__halfStep = Math.floor(illuminations__step / 2);
-        const halfHeight = Math.floor(p5.height / 2);
+          }
 
-        /////////////////////
-        // Sample Mode (1) //
-        /////////////////////
+          // Sample Data
+          const illuminations__step = Math.floor(p5.width / samples.length)
+          const illuminations__halfStep = Math.floor(illuminations__step / 2);
+          const halfHeight = Math.floor(p5.height / 2);
 
-        if (window.vueApplication.$store.state.previewMode === 1) {
+          /////////////////////
+          // Sample Mode (1) //
+          /////////////////////
+
+          if (window.vueApplication.$store.state.previewMode === 1) {
+
+            // Background
+            ctx.globalCompositeOperation = 'normal';
+            ctx.fillStyle = "#343434";
+            ctx.fillRect(0, 0, previewCanvas.width, previewCanvas.height);
+
+            // Code Preview Behind Sampled Lights
+            ctx.globalCompositeOperation = 'normal';
+            ctx.globalAlpha = 0.2;
+            ctx.globalAlpha = 1;
+
+            // Sampled Lights
+            for (let i = 0; i < samples.length; i++) {
+              ctx.beginPath();
+              ctx.ellipse(Math.floor((illuminations__halfStep + (i * illuminations__step)) * 1.6), 80, 4, 4, 0, 0, Math.PI * 2, false);
+              ctx.fillStyle = 'rgba(' + samples[i][0] + ',' + samples[i][1] + ',' + samples[i][2] + ', 1)';
+              ctx.globalCompositeOperation = 'normal';
+              ctx.fill();
+            }
+
+            // All done
+            return true;
+
+          }
+
+
+          /////////////////////
+          // Mockup Mode (0) //
+          /////////////////////
+
 
           // Background
           ctx.globalCompositeOperation = 'normal';
-          ctx.fillStyle = "#343434";
+          let my_gradient_background = ctx.createLinearGradient(0, 20, 0, 160);
+          my_gradient_background.addColorStop(0, '#575757');
+          my_gradient_background.addColorStop(1, '#4b4b4b');
+          ctx.fillStyle = my_gradient_background;
           ctx.fillRect(0, 0, previewCanvas.width, previewCanvas.height);
 
-          // Code Preview Behind Sampled Lights
-          ctx.globalCompositeOperation = 'normal';
-          ctx.globalAlpha = 0.2;
-          ctx.globalAlpha = 1;
-
-          // Sampled Lights
+          // Light Rays
           for (let i = 0; i < samples.length; i++) {
+
+            const x = (illuminations__halfStep + (i * illuminations__step));
+
+            // Hard Light Source
             ctx.beginPath();
-            ctx.ellipse(Math.floor((illuminations__halfStep + (i * illuminations__step)) * 1.6), 80, 4, 4, 0, 0, Math.PI * 2, false);
-            ctx.fillStyle = 'rgba(' + samples[i][0] + ',' + samples[i][1] + ',' + samples[i][2] + ', 1)';
-            ctx.globalCompositeOperation = 'normal';
+            ctx.moveTo((x - 1) * 1.6, 20 * 1.6);
+            ctx.lineTo((x + 1) * 1.6, 20 * 1.6);
+            ctx.lineTo(((x) + (illuminations__step * 2)) * 1.6, (halfHeight + 80) * 1.6);
+            ctx.lineTo(((x) - (illuminations__step * 4)) * 1.6, (halfHeight + 80) * 1.6);
+            let my_gradient_hard = ctx.createLinearGradient(0, 20, 0, 160);
+            my_gradient_hard.addColorStop(0, 'rgba(' + samples[i][0] + ',' + samples[i][1] + ',' + samples[i][2] + ', 0)');
+            my_gradient_hard.addColorStop(0.3, 'rgba(' + samples[i][0] + ',' + samples[i][1] + ',' + samples[i][2] + ',' + (samples[i][3] / 5) + ')');
+            my_gradient_hard.addColorStop(0.5, 'rgba(' + samples[i][0] + ',' + samples[i][1] + ',' + samples[i][2] + ',' + (samples[i][3]) + ')');
+            my_gradient_hard.addColorStop(0.8, 'rgba(' + samples[i][0] + ',' + samples[i][1] + ',' + samples[i][2] + ', 0)');
+            ctx.fillStyle = my_gradient_hard;
+            ctx.globalCompositeOperation = 'lighter';
+            ctx.globalAlpha = 0.25;
             ctx.fill();
+            ctx.globalAlpha = 1;
           }
 
-          // All done
-          return true;
+          // Ceiling
+          ctx.globalCompositeOperation = 'normal';
+          let my_gradient_ceiling = ctx.createLinearGradient(0, 0, 0, 22);
+          my_gradient_ceiling.addColorStop(0.8, '#777777');
+          my_gradient_ceiling.addColorStop(1, '#6e6e6e');
+          ctx.fillStyle = my_gradient_ceiling;
+          ctx.fillRect(0, 0, previewCanvas.width, 20);
 
-        }
+          // Light Sources (Par Cans)
+          for (let i = 0; i < samples.length; i++) {
 
+            const x = (illuminations__halfStep + (i * illuminations__step));
 
-        /////////////////////
-        // Mockup Mode (0) //
-        /////////////////////
+            ctx.beginPath();
+            ctx.ellipse((x) * 1.6, 10, 2, 2, 0, 0, Math.PI * 2, false);
+            ctx.fillStyle = 'rgba(' + samples[i][0] + ',' + samples[i][1] + ',' + samples[i][2] + ', 1)';
+            ctx.globalCompositeOperation = 'hard-light';
+            ctx.fill();
 
+          }
 
-        // Background
-        ctx.globalCompositeOperation = 'normal';
-        let my_gradient_background = ctx.createLinearGradient(0, 20, 0, 160);
-        my_gradient_background.addColorStop(0, '#575757');
-        my_gradient_background.addColorStop(1, '#4b4b4b');
-        ctx.fillStyle = my_gradient_background;
-        ctx.fillRect(0, 0, previewCanvas.width, previewCanvas.height);
-
-        // Light Rays
-        for (let i = 0; i < samples.length; i++) {
-
-          const x = (illuminations__halfStep + (i * illuminations__step));
-
-          // Hard Light Source
-          ctx.beginPath();
-          ctx.moveTo((x - 1) * 1.6, 20 * 1.6);
-          ctx.lineTo((x + 1) * 1.6, 20 * 1.6);
-          ctx.lineTo(((x) + (illuminations__step * 2)) * 1.6, (halfHeight + 80) * 1.6);
-          ctx.lineTo(((x) - (illuminations__step * 4)) * 1.6, (halfHeight + 80) * 1.6);
-          let my_gradient_hard = ctx.createLinearGradient(0, 20, 0, 160);
-          my_gradient_hard.addColorStop(0, 'rgba(' + samples[i][0] + ',' + samples[i][1] + ',' + samples[i][2] + ', 0)');
-          my_gradient_hard.addColorStop(0.3, 'rgba(' + samples[i][0] + ',' + samples[i][1] + ',' + samples[i][2] + ',' + (samples[i][3] / 5) + ')');
-          my_gradient_hard.addColorStop(0.5, 'rgba(' + samples[i][0] + ',' + samples[i][1] + ',' + samples[i][2] + ',' + (samples[i][3]) + ')');
-          my_gradient_hard.addColorStop(0.8, 'rgba(' + samples[i][0] + ',' + samples[i][1] + ',' + samples[i][2] + ', 0)');
-          ctx.fillStyle = my_gradient_hard;
-          ctx.globalCompositeOperation = 'lighter';
-          ctx.globalAlpha = 0.25;
-          ctx.fill();
-          ctx.globalAlpha = 1;
-        }
-
-        // Ceiling
-        ctx.globalCompositeOperation = 'normal';
-        let my_gradient_ceiling = ctx.createLinearGradient(0, 0, 0, 22);
-        my_gradient_ceiling.addColorStop(0.8, '#777777');
-        my_gradient_ceiling.addColorStop(1, '#6e6e6e');
-        ctx.fillStyle = my_gradient_ceiling;
-        ctx.fillRect(0, 0, previewCanvas.width, 20);
-
-        // Light Sources (Par Cans)
-        for (let i = 0; i < samples.length; i++) {
-
-          const x = (illuminations__halfStep + (i * illuminations__step));
-
-          ctx.beginPath();
-          ctx.ellipse((x) * 1.6, 10, 2, 2, 0, 0, Math.PI * 2, false);
-          ctx.fillStyle = 'rgba(' + samples[i][0] + ',' + samples[i][1] + ',' + samples[i][2] + ', 1)';
-          ctx.globalCompositeOperation = 'hard-light';
-          ctx.fill();
-
+        } catch (e) {
+          // It's okay to have the occasional drawing error, we shouldn't fret too much. It'll come back when it's ready.
         }
 
         // All done
@@ -381,7 +392,24 @@ export default {
       }
 
       // Must remain a constant and not directly referenced so that it can be appended to with illuminationsSampling/illuminationsPreview methods below
+      const userDefinedPreloadMethod = window.preload || function () {
+      };
+      const userDefinedSetupMethod = window.setup || function () {
+      };
       const userDefinedDrawMethod = window.draw || function () {
+      };
+
+      window.preloadComplete = false
+      window.preload = function(){
+        userDefinedPreloadMethod();
+        window.preloadComplete = true;
+      };
+
+      window.setup = function(){
+        if(!window.preloadComplete){
+          return;
+        }
+        userDefinedSetupMethod();
       };
 
       // Draw the user's code if lights are on, otherwise draw a black screen.
@@ -389,6 +417,9 @@ export default {
         window.draw = function () {
           // eslint-disable-next-line no-undef
           background(0);
+          if(!window.preloadComplete){
+            return;
+          }
           userDefinedDrawMethod();
           const previewSamples = window.illuminationsSampling();
           window.illuminationsPreview(previewSamples);
@@ -397,6 +428,9 @@ export default {
         window.draw = function () {
           // eslint-disable-next-line no-undef
           background(0);
+          if(!window.preloadComplete){
+            return;
+          }
           const previewSamples = window.illuminationsSampling();
           window.illuminationsPreview(previewSamples);
 
