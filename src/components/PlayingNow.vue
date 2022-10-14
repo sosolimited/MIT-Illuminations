@@ -70,14 +70,15 @@ export default {
     // Prepare the protected variables
     this.protectedVariables = Object.keys(window);
     // Deploy the P5
-    this.$nextTick(() => {
-      setTimeout(() => {
+    let loadInterval = setInterval(function () {
+      if (window.p5) {
+        clearInterval(loadInterval);
         this.deployToP5();
         this.$watch('playingNowWatcher', this.deployToP5);
         this.$watch('numLights', this.deployToP5);
         this.$watch('lightsOn', this.deployToP5);
-      }, 1000);
-    });
+      }
+    }.bind(this), 100);
   },
   methods: {
 
@@ -380,15 +381,8 @@ export default {
       }
 
       // Must remain a constant and not directly referenced so that it can be appended to with illuminationsSampling/illuminationsPreview methods below
-      const userDefinedSetupMethod = window.setup || function () {
-      };
       const userDefinedDrawMethod = window.draw || function () {
       };
-
-      window.setup = function () {
-        userDefinedSetupMethod();
-        window.frameRate(30);
-      }
 
       // Draw the user's code if lights are on, otherwise draw a black screen.
       if (this.lightsOn) {
@@ -410,8 +404,11 @@ export default {
       }
 
       // Load P5 in on-demand global mode
-      window.illuminationsP5 = new window.p5();
-      window.illuminationsP5.pixelDensity(1);
+      this.$nextTick(() => {
+        window.illuminationsP5 = new window.p5();
+        window.frameRate(30);
+        window.illuminationsP5.pixelDensity(1);
+      });
     },
 
   }
