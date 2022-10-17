@@ -20,7 +20,7 @@
 
     </v-bottom-navigation>
     <div id="content">
-      <router-view id="content"></router-view>
+      <router-view id="content" :key="$route.path"></router-view>
       <PlayingNow/>
     </div>
   </v-app>

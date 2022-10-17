@@ -31,7 +31,7 @@
           <v-card-actions>
 
             <!-- Edit Show Info -->
-            <v-btn @click="opendAndScrollToInfoEditor" color="indigo lighten-2" text small>Edit Details</v-btn>
+            <v-btn @click="openAndScrollToInfoEditor" color="indigo lighten-2" text small>Edit Details</v-btn>
             <v-spacer></v-spacer>
 
             <!-- Tags -->
@@ -269,7 +269,7 @@
                     :clearable="false"
                     prepend-icon=""
                     label="Click to upload..."
-                    @change="copyAsset"
+                    @change="updateThumbnailAsset"
                     outlined
                     dense
                     class="card-img-input"
@@ -462,23 +462,27 @@ export default {
     }
   },
   methods: {
-    //
-    // Navigation
-    //
+
+    /**
+     * Take us home, Jim.
+     */
     routeToLibrary() {
       router.push({name: 'home'})
     },
-    //
-    // Saving logic
-    //
+
+    /**
+     * Delete the current show
+     */
     deleteOriginal() {
       this.deleteShowDialog = false
-      // Delete corresponding show in library
       this.$store.commit('deleteShow', this.editingNowId)
-      // Delete draft version, and reroute home
       this.$store.commit('deleteShow', this.id)
       router.push({name: 'home'})
     },
+
+    /**
+     * Save the show to the library, and update the store.
+     */
     saveToOriginal() {
       this.show.info.thumbnail = this.thumbnail
       this.$store.commit('saveToOriginal', {
@@ -486,29 +490,26 @@ export default {
         info: this.show.info,
         controls: this.controls,
         code: this.codeEditor
-      })
-
-      // Reset the baseline save properties
+      });
       this.lastSavedCodeVersion = this.codeEditor
       this.unsavedCode = this.codeEditor !== this.lastSavedCodeVersion;
       this.unsavedControl = false
       this.unsavedInfo = false
     },
+
+    /**
+     * Copy the existing show to a new show, and navigate there.
+     */
     saveToNew() {
-      // Create a new id
-      const newId = nanoid(10)
-      this.show.template = false
-      this.show.info.favorite = false
-
-      // Retitle the show as a copy
-      this.show.info.title = `Copy of ${this.show.info.title}`
-
-      // Create a new show in the store based on the current illuminationsPreview
-      this.$store.commit('createCopy', {show: this.show, id: newId})
-      // Make this new show the 'currently editing' show
-      this.$store.commit('setEditingNowId', newId)
-      // Save changes to the new show
-      this.saveToOriginal()
+      const newId = nanoid(10);
+      let newShow = JSON.parse(JSON.stringify(this.show));
+      newShow.template = false;
+      newShow.info.favorite = false;
+      newShow.info.thumbnail = "blank.png";
+      newShow.info.title = `Copy of ${this.show.info.title}`;
+      this.$store.commit('createCopy', {show: newShow, id: newId});
+      this.$store.commit('setEditingNowId', newId);
+      router.push({name: 'preview', params: {id: newId}});
     },
 
 
@@ -518,20 +519,11 @@ export default {
      * @param initialMount Whether or not this is the initial mount of the show, in which case, don't clear errors.
      */
     pushShowToLights(publishShow = false, initialMount = false) {
-      // Clear the log
-      // this.logs = [];
-
-      // Save any unsaved changes
       this.saveToOriginal();
-
-      // Set the editing now show to the playing now show
       this.$store.commit('uploadToLights', this.id);
-
       if (publishShow) {
         this.$store.commit('setLastPublishedShow', this.id);
       }
-
-      // Clear any existing error for this show
       if (this.id === this.$store.state.errorID && !initialMount) {
         if (this.$store.state.lastPublishedShow) {
           if (this.id === this.$store.state.lastPublishedShow.id) {
@@ -540,104 +532,113 @@ export default {
         }
         this.$store.commit('clearError');
       }
-
     },
-    //
-    // Editing
-    //
-    opendAndScrollToInfoEditor() {
+
+    /**
+     * Opens the informational panel for the show.
+     */
+    openAndScrollToInfoEditor() {
       this.isComponentVisible.lights = false
       this.isComponentVisible.controls = false
       this.isComponentVisible.code = false
       this.isComponentVisible.info = true
       this.$vuetify.goTo('#info')
     },
-    copyAsset(src) {
-      const newId = nanoid(10)
-      const fse = window.fse
+
+    /**
+     * Updates the thumbnail for the show.
+     * @param src
+     */
+    updateThumbnailAsset(src) {
+      const newId = nanoid(10);
+      const fse = window.fse;
       fse.copyAsset(src.path, newId);
-      setTimeout(
-          () =>
+      setTimeout(() =>
               this.$store.commit('updateThumbnail', {
                 src: `${newId}.png`,
                 id: this.show.id
               }),
           1000
-      )
-      this.unsavedInfo = true
+      );
     },
-    //
-    // Preview visibility
-    //
+
+    /**
+     * Opens the controls panel for the show.
+     */
     toggleControlsVisibility() {
       this.isComponentVisible.controls = !this.isComponentVisible.controls
     },
+
+    /**
+     * Opens the code panel for the show.
+     */
     toggleCodeVisibility() {
       this.isComponentVisible.code = !this.isComponentVisible.code
     },
+
+    /**
+     * Opens the informational panel for the show.
+     */
     toggleInfoVisibility() {
       this.isComponentVisible.info = !this.isComponentVisible.info
     },
+
+    /**
+     * Opens the help/console panel for the show.
+     */
     toggleConsoleInfoVisibility() {
       this.isComponentVisible.consoleInfo = !this.isComponentVisible.consoleInfo
     },
-    //
-    // Control updates
-    //
+
+    /**
+     * Updates a control's value in the store.
+     * @param val
+     * @param controlId
+     */
     updateControlValue(val, controlId) {
       this.$store.commit('updateControlValue', {
         controlId: controlId,
         controlValue: val,
         showId: this.id
       })
-
-      // SIMPLE COLORS HAS A BUG
       this.unsavedControl = true;
-
     },
+
+    /**
+     * Removes an unused control from the store.
+     * @param controlId
+     */
     deleteUnusedControl(controlId) {
       this.$store.commit('deleteUnusedControl', {
         controlId: controlId,
         showId: this.id
       })
-
-      // Toggle visibility as a behind-the-scenes hack
       this.isComponentVisible.controls = false
       this.isComponentVisible.controls = true
       this.unsavedControl = true
     },
+
+    /**
+     * Adds a new control to the store.
+     */
     newControlAdded() {
-      // Toggle visibility as a behind-the-scenes hack
       this.isComponentVisible.controls = false
       this.isComponentVisible.controls = true
       this.unsavedControl = true
     }
+
   },
   watch: {
-    controls: {
-      handler() {
-        if (this.isCodeRunning) {
-          // Should refresh illuminationsPreview
-        }
-      },
-      deep: true
-    },
 
-    // Watch for unsaved changes
+    /**
+     * Watch for changes to the code editor, and update the store.
+     */
     codeEditor: {
       handler() {
         this.unsavedCode = this.codeEditor !== this.lastSavedCodeVersion;
       }
-    },
-
-    // Truncate any consolidated user console logs so we don't overflow...
-    logs: {
-      handler() {
-        if (this.logs.length > 100) {
-          this.logs = this.logs.splice(-100);
-        }
-      }
     }
+
   }
 }
 </script>
@@ -666,24 +667,6 @@ canvas {
 .CodeMirror {
   height: 800px !important;
   font-size: 14px !important;
-}
-
-.log-counter,
-.console-msg-n {
-  color: #e91e63;
-}
-
-.console-msg-err {
-  background-color: #e91e63;
-  color: white;
-  border-radius: 5px;
-}
-
-.console {
-  overflow-x: hidden;
-  height: 800px;
-  font-size: 14px;
-  font-family: monospace;
 }
 
 pre {

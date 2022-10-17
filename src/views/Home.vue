@@ -129,7 +129,7 @@ export default {
   methods: {
     createShowAndReroute() {
       // Set up the official store version
-      const storeId = nanoid(10)
+      const storeId = nanoid(10);
       const template = {
         id: storeId,
         info: {
