@@ -139,6 +139,9 @@
                                 label="How Many Lights?"
                                 single-line
                                 type="number"
+                                :rules="numLightRules"
+                                :min="1"
+                                :max="256"
                             ></v-text-field>
                           </template>
                         </v-edit-dialog>
@@ -211,7 +214,12 @@ export default {
       currentTab: 'settings-kinet',
       settingsDialog: false,
       availableSerialPorts: [],
-      localKinetStrands: []
+      localKinetStrands: [],
+      numLightRules: [
+        v => !!v || "How forgot to tell us how many lights you want to preview for.",
+        v => (v && v < 1) || "You have to have at least a single light to preview.",
+        v => (v && v > 256) || "Illuminations by MIT only accepts up to 256 lights at the moment.",
+      ],
     }
   },
   props: {
@@ -223,6 +231,11 @@ export default {
         return this.$store.state.numLights;
       },
       set(value) {
+        if (value < 1 || !value) {
+          value = 1;
+        } else if (value > 256) {
+          value = 256;
+        }
         this.$store.commit('updateNumLights', value)
       }
     },
@@ -339,7 +352,7 @@ export default {
 </script>
 
 <style>
-  *{
-    -webkit-app-region: no-drag;
-  }
+* {
+  -webkit-app-region: no-drag;
+}
 </style>

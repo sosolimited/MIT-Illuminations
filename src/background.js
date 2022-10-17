@@ -5,7 +5,7 @@ import unhandled from "electron-unhandled";
 
 unhandled();
 
-import {app, BrowserWindow, Menu, protocol, dialog, ipcMain} from 'electron'
+import {app, BrowserWindow, Menu, protocol, dialog, ipcMain, shell} from 'electron'
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
 import {copyAssets, getAssetPath} from './assets'
 import electronStore from "electron-store";
@@ -18,7 +18,7 @@ const userDataPath = app.getPath('userData');
 // copy them now in the background.
 copyAssets();
 
-// Fix for serialport usage
+// Fix for serial port usage
 app.allowRendererProcessReuse = false;
 
 // Fix for socket connection
@@ -41,21 +41,11 @@ function createWindow() {
 
     // Establish the splash screen
     const splash = new BrowserWindow({width: 800, height: 500, transparent: true, frame: false, alwaysOnTop: true});
-    //Menu.setApplicationMenu(null);
 
     const template = [
         {
             label: 'Edit',
             submenu: [
-                {
-                    role: 'undo'
-                },
-                {
-                    role: 'redo'
-                },
-                {
-                    type: 'separator'
-                },
                 {
                     role: 'cut'
                 },
@@ -67,7 +57,6 @@ function createWindow() {
                 }
             ]
         },
-
         {
             label: 'View',
             submenu: [
@@ -75,29 +64,20 @@ function createWindow() {
                     role: 'reload'
                 },
                 {
+                    role: 'togglefullscreen'
+                },
+                {
+                    type: 'separator'
+                },
+                {
+                    type: 'separator'
+                },
+                {
                     role: 'toggledevtools'
                 },
-                {
-                    type: 'separator'
-                },
-                {
-                    role: 'resetzoom'
-                },
-                {
-                    role: 'zoomin'
-                },
-                {
-                    role: 'zoomout'
-                },
-                {
-                    type: 'separator'
-                },
-                {
-                    role: 'togglefullscreen'
-                }
+
             ]
         },
-
         {
             role: 'window',
             submenu: [
@@ -106,6 +86,25 @@ function createWindow() {
                 },
                 {
                     role: 'close'
+                }
+            ]
+        },
+        {
+            role: 'help',
+            submenu: [
+                {
+                    label: 'About MIT Illuminations',
+                    click: async () => {
+                        const { shell } = require('electron')
+                        await shell.openExternal('https://illuminations.mit.edu')
+                    }
+                },
+                {
+                    label: 'Report a Bug',
+                    click: async () => {
+                        const { shell } = require('electron')
+                        await shell.openExternal('https://github.com/sosolimited/MIT-Illuminations/issues/new')
+                    }
                 }
             ]
         }

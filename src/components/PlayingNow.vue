@@ -78,7 +78,7 @@ export default {
         this.$watch('numLights', this.deployToP5);
         this.$watch('lightsOn', this.deployToP5);
       }
-    }.bind(this), 100);
+    }.bind(this), 800);
   },
   methods: {
 
@@ -182,7 +182,7 @@ export default {
         }
 
         // Preload didn't run yet.
-        if(!window.preloadComplete){
+        if (!window.preloadComplete) {
           return;
         }
 
@@ -204,8 +204,8 @@ export default {
           }
 
           // Sample Data
-          const illuminations__step = Math.floor(p5.width / samples.length)
-          const illuminations__halfStep = Math.floor(illuminations__step / 2);
+          const illuminations__step = p5.width / samples.length;
+          const illuminations__halfStep = illuminations__step / 2;
           const halfHeight = Math.floor(p5.height / 2);
 
           /////////////////////
@@ -400,13 +400,13 @@ export default {
       };
 
       window.preloadComplete = false
-      window.preload = function(){
+      window.preload = function () {
         userDefinedPreloadMethod();
         window.preloadComplete = true;
       };
 
-      window.setup = function(){
-        if(!window.preloadComplete){
+      window.setup = function () {
+        if (!window.preloadComplete) {
           return;
         }
         userDefinedSetupMethod();
@@ -417,7 +417,7 @@ export default {
         window.draw = function () {
           // eslint-disable-next-line no-undef
           background(0);
-          if(!window.preloadComplete){
+          if (!window.preloadComplete) {
             return;
           }
           userDefinedDrawMethod();
@@ -428,7 +428,7 @@ export default {
         window.draw = function () {
           // eslint-disable-next-line no-undef
           background(0);
-          if(!window.preloadComplete){
+          if (!window.preloadComplete) {
             return;
           }
           const previewSamples = window.illuminationsSampling();
