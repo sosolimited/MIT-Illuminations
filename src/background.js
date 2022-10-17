@@ -61,9 +61,6 @@ function createWindow() {
             label: 'View',
             submenu: [
                 {
-                    role: 'reload'
-                },
-                {
                     role: 'togglefullscreen'
                 },
                 {

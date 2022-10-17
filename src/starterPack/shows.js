@@ -184,7 +184,7 @@ module.exports = [
         "info": {
             "title": "Equalizer",
             "description": "An audio spectrum (FFT)",
-            "thumbnail": "blank.png",
+            "thumbnail": "nulcP0p1nw.png",
             "favorite": true,
             "contributors": "Sosolimited",
             "longDescription": "This visualization takes the full FFT spectrum of audio input and displays various colors on the frieze based on spectrum analysis."
@@ -257,7 +257,7 @@ module.exports = [
             "title": "Vocalizer",
             "description": "Speech-to-lights",
             "longDescription": "This visualization takes the microphone input and translates that into an effect that flows out from the center of the lights.",
-            "thumbnail": "blank.png",
+            "thumbnail": "BLjfd2LZpg.png",
             "favorite": false,
             "contributors": "Sosolimited"
         },
