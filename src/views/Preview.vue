@@ -268,11 +268,12 @@
                     accept=".png"
                     :clearable="false"
                     prepend-icon=""
-                    label="Click to upload..."
+                    label="Upload a PNG..."
                     @change="updateThumbnailAsset"
                     outlined
                     dense
                     class="card-img-input"
+                    :messages="['Only PNG images are currently supported.']"
                 ></v-file-input>
               </v-col>
             </v-row>

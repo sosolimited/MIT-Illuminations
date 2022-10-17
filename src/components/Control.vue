@@ -56,6 +56,8 @@
         prepend-icon="mdi-file-upload"
         showsize
         @change="copyAsset"
+        label="Upload a PNG"
+        :messages="['Only PNG images are currently supported.']"
     ></v-file-input>
 
     <!-- Card Description -->
