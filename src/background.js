@@ -9,6 +9,7 @@ import {app, BrowserWindow, Menu, protocol, dialog, ipcMain, shell} from 'electr
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
 import {copyAssets, getAssetPath} from './assets'
 import electronStore from "electron-store";
+import pkgjson from '../package.json';
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const path = require('path');
@@ -102,6 +103,10 @@ function createWindow() {
                         const { shell } = require('electron')
                         await shell.openExternal('https://github.com/sosolimited/MIT-Illuminations/issues/new')
                     }
+                },
+                {
+                    label: `version ${pkgjson.version}`,
+                    enabled: false
                 }
             ]
         }
