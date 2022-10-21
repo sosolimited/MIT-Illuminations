@@ -127,7 +127,8 @@ function createWindow() {
             contextIsolation: false,
             webSecurity: false,
             preload: path.join(__dirname, 'preload.js'),
-            additionalArguments: [userDataPath]
+            additionalArguments: [userDataPath],
+            backgroundThrottling: false
         }
     });
 
