@@ -5,7 +5,7 @@ import unhandled from "electron-unhandled";
 
 unhandled();
 
-import {app, BrowserWindow, Menu, protocol, dialog, ipcMain, shell} from 'electron'
+import {app, BrowserWindow, Menu, protocol, dialog, ipcMain, shell, powerSaveBlocker} from 'electron'
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
 import {copyAssets, getAssetPath} from './assets'
 import electronStore from "electron-store";
@@ -218,6 +218,8 @@ app.on('ready', async () => {
     });
 
     createWindow();
+
+    powerSaveBlocker.start('prevent-app-suspension');
 })
 
 // Exit cleanly on request from parent process in development mode.
