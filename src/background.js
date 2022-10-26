@@ -5,10 +5,11 @@ import unhandled from "electron-unhandled";
 
 unhandled();
 
-import {app, BrowserWindow, Menu, protocol, dialog, ipcMain, shell} from 'electron'
+import {app, BrowserWindow, Menu, protocol, dialog, ipcMain, shell, powerSaveBlocker} from 'electron'
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
 import {copyAssets, getAssetPath} from './assets'
 import electronStore from "electron-store";
+import pkgjson from '../package.json';
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const path = require('path');
@@ -102,6 +103,10 @@ function createWindow() {
                         const { shell } = require('electron')
                         await shell.openExternal('https://github.com/sosolimited/MIT-Illuminations/issues/new')
                     }
+                },
+                {
+                    label: `version ${pkgjson.version}`,
+                    enabled: false
                 }
             ]
         }
@@ -127,7 +132,8 @@ function createWindow() {
             contextIsolation: false,
             webSecurity: false,
             preload: path.join(__dirname, 'preload.js'),
-            additionalArguments: [userDataPath]
+            additionalArguments: [userDataPath],
+            backgroundThrottling: false
         }
     });
 
@@ -212,6 +218,8 @@ app.on('ready', async () => {
     });
 
     createWindow();
+
+    powerSaveBlocker.start('prevent-app-suspension');
 })
 
 // Exit cleanly on request from parent process in development mode.
