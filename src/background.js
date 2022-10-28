@@ -11,6 +11,8 @@ import {copyAssets, getAssetPath} from './assets'
 import electronStore from "electron-store";
 import pkgjson from '../package.json';
 
+electronStore.initRenderer();
+
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const path = require('path');
 const userDataPath = app.getPath('userData');
