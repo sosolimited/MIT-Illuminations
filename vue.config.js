@@ -8,8 +8,7 @@ module.exports = {
       },
       builderOptions: {
         productName: "Illuminations by MIT",
-        extraResources: ["./extraResources/**"],
-        extraFiles: ["./LICENSE"],
+        extraResources: ["./extraResources/**", "./LICENSE"],
         afterSign: "tools/notarize.js",
         /*win: {
           target: ['zip']
