@@ -23,7 +23,11 @@ module.exports = {
         dmg: {
           sign: false, // signing DMGs without notarizing can cause errors
           writeUpdateInfo: false // disable blockmap generation to save time
-        }
+        },
+        linux: {
+          target: ['AppImage'],
+          category: 'Development',
+        },
       },
       nodeIntegration: true,
       externals: ['serialport']

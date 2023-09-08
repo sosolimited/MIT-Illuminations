@@ -9,7 +9,8 @@
     "postinstall": "electron-builder install-app-deps",
     "build": "vue-cli-service electron:build -w",
     "make-mac-release": "vue-cli-service electron:build -m --x64 --arm64",
-    "make-windows-release": "vue-cli-service electron:build -w"
+    "make-windows-release": "vue-cli-service electron:build -w",
+    "make-linux-release": "vue-cli-service electron:build -l"
   },
   "main": "background.js",
   "dependencies": {
